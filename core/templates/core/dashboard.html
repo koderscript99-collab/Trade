@@ -1,0 +1,46 @@
+
+{% extends "core/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<h2>Balances</h2>
+<ul>
+    <li>Main Balance: {{ user.balance }}</li>
+    <li>Investment Balance: {{ user.investment_balance }}</li>
+    <li>Profit Balance: {{ user.profit_balance }}</li>
+    <li>Referral Balance: {{ user.referral_balance }}</li>
+</ul>
+
+<p>Total currently invested (running): {{ total_invested }}</p>
+<p>Referrals: {{ referral_count }}</p>
+
+<h2>Active Investments</h2>
+<ul>
+    {% for inv in active_investments %}
+    <li>{{ inv.plan.name }} - {{ inv.amount }} - Ends {{ inv.ends_at }}
+        <a href="{% url 'core:investment_detail' inv.pk %}">View</a></li>
+    {% empty %}
+    <li>No active investments.</li>
+    {% endfor %}
+</ul>
+
+<h2>Recent Transactions</h2>
+<ul>
+    {% for tx in recent_transactions %}
+    <li>{{ tx.created_at }} - {{ tx.transaction_type }} - {{ tx.amount }} - {{ tx.description }}</li>
+    {% empty %}
+    <li>No transactions yet.</li>
+    {% endfor %}
+</ul>
+
+<h2>Recent Deposits</h2>
+<ul>
+    {% for dep in recent_deposits %}
+    <li>{{ dep.created_at }} - {{ dep.amount }} - {{ dep.status }}
+        <a href="{% url 'core:deposit_detail' dep.pk %}">View</a></li>
+    {% empty %}
+    <li>No deposits yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,23 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}News{% endblock %}
+{% block content %}
+<h1>News Articles</h1>
+<a href="{% url 'core:admin_news_create' %}">Add New Article</a>
+<table border="1">
+    <tr><th>Title</th><th>Published</th><th>Date</th><th></th></tr>
+    {% for item in news_items %}
+    <tr>
+        <td>{{ item.title }}</td>
+        <td>{{ item.published }}</td>
+        <td>{{ item.created_at }}</td>
+        <td>
+            <a href="{% url 'core:admin_news_update' item.pk %}">Edit</a> |
+            <a href="{% url 'core:admin_news_delete' item.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No news articles yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

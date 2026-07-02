@@ -1,0 +1,46 @@
+
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h1>Admin Dashboard</h1>
+<ul>
+    <li>Total Users: {{ stats.total_users }}</li>
+    <li>Total Approved Deposits: {{ stats.total_deposits }}</li>
+    <li>Pending Deposits: {{ stats.pending_deposits }}</li>
+    <li>Pending Withdrawals: {{ stats.pending_withdrawals }}</li>
+    <li>Pending KYC: {{ stats.pending_kyc }}</li>
+    <li>Active Investments: {{ stats.active_investments }}</li>
+    <li>Total Invested (running): {{ stats.total_invested }}</li>
+</ul>
+
+<h2>Recent Deposits</h2>
+<ul>
+    {% for d in recent_deposits %}
+    <li>{{ d.user.username }} - {{ d.amount }} - {{ d.status }}
+        <a href="{% url 'core:admin_deposit_detail' d.pk %}">View</a></li>
+    {% empty %}
+    <li>None yet.</li>
+    {% endfor %}
+</ul>
+
+<h2>Recent Withdrawals</h2>
+<ul>
+    {% for w in recent_withdrawals %}
+    <li>{{ w.user.username }} - {{ w.amount }} - {{ w.status }}
+        <a href="{% url 'core:admin_withdrawal_detail' w.pk %}">View</a></li>
+    {% empty %}
+    <li>None yet.</li>
+    {% endfor %}
+</ul>
+
+<h2>Recent Users</h2>
+<ul>
+    {% for u in recent_users %}
+    <li>{{ u.username }} - {{ u.email }} - {{ u.created_at }}
+        <a href="{% url 'core:admin_user_detail' u.pk %}">View</a></li>
+    {% empty %}
+    <li>None yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

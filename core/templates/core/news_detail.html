@@ -1,0 +1,13 @@
+
+
+{% extends "core/base.html" %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block content %}
+<h1>{{ article.title }}</h1>
+<p>{{ article.created_at }}</p>
+{% if article.image %}
+<img src="{{ article.image.url }}" alt="{{ article.title }}">
+{% endif %}
+<div>{{ article.content|linebreaks }}</div>
+<a href="{% url 'core:news_list' %}">Back to News</a>
+{% endblock %}

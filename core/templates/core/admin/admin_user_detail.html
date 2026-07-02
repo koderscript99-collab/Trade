@@ -1,0 +1,53 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}User: {{ target_user.username }}{% endblock %}
+{% block content %}
+<h1>User: {{ target_user.username }}</h1>
+<p>Email: {{ target_user.email }} | Referral Code: {{ target_user.referral_code }}</p>
+
+<h2>Edit Profile / Flags</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="save_profile">Save</button>
+</form>
+
+<h2>Adjust Balance</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ adjust_form.as_p }}
+    <button type="submit" name="adjust_balance">Apply</button>
+</form>
+
+<h2>Investments</h2>
+<table border="1">
+    <tr><th>Plan</th><th>Amount</th><th>Status</th><th>Ends</th></tr>
+    {% for inv in investments %}
+    <tr><td>{{ inv.plan.name }}</td><td>{{ inv.amount }}</td><td>{{ inv.status }}</td><td>{{ inv.ends_at }}</td></tr>
+    {% empty %}
+    <tr><td colspan="4">No investments.</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Deposits</h2>
+<table border="1">
+    <tr><th>Amount</th><th>Status</th><th>Date</th></tr>
+    {% for d in deposits %}
+    <tr><td>{{ d.amount }}</td><td>{{ d.status }}</td><td>{{ d.created_at }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No deposits.</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Withdrawals</h2>
+<table border="1">
+    <tr><th>Amount</th><th>Status</th><th>Date</th></tr>
+    {% for w in withdrawals %}
+    <tr><td>{{ w.amount }}</td><td>{{ w.status }}</td><td>{{ w.created_at }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No withdrawals.</td></tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'core:admin_users_list' %}">Back to Users</a>
+{% endblock %}

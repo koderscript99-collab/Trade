@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+</head>
+<body>
+
+<nav>
+    <a href="{% url 'core:admin_dashboard' %}">Dashboard</a> |
+    <a href="{% url 'core:admin_users_list' %}">Users</a> |
+    <a href="{% url 'core:admin_deposits_list' %}">Deposits</a> |
+    <a href="{% url 'core:admin_withdrawals_list' %}">Withdrawals</a> |
+    <a href="{% url 'core:admin_kyc_list' %}">KYC</a> |
+    <a href="{% url 'core:admin_plans_list' %}">Plans</a> |
+    <a href="{% url 'core:admin_wallets_list' %}">Wallets</a> |
+    <a href="{% url 'core:admin_news_list' %}">News</a> |
+    <a href="{% url 'core:admin_transactions_list' %}">Transactions</a> |
+    <a href="{% url 'core:admin_send_notification' %}">Send Notification</a> |
+    <a href="{% url 'core:admin_site_settings' %}">Site Settings</a> |
+    <a href="{% url 'core:admin_logout' %}">Logout</a>
+</nav>
+
+<hr>
+
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+<hr>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+
+{% extends "core/base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block content %}
+<h1>Transaction History</h1>
+<table border="1">
+    <tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th></tr>
+    {% for tx in page_obj %}
+    <tr>
+        <td>{{ tx.created_at }}</td>
+        <td>{{ tx.transaction_type }}</td>
+        <td>{{ tx.amount }}</td>
+        <td>{{ tx.description }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No transactions yet.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

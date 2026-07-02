@@ -1,0 +1,12 @@
+
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Site Settings{% endblock %}
+{% block content %}
+<h1>Site Settings</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Settings</button>
+</form>
+{% endblock %}

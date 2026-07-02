@@ -1,0 +1,31 @@
+
+{% extends "core/base.html" %}
+{% block title %}My Withdrawals{% endblock %}
+{% block content %}
+<h1>My Withdrawals</h1>
+<a href="{% url 'core:withdrawal_create' %}">New Withdrawal</a>
+<table border="1">
+    <tr><th>Date</th><th>Coin</th><th>Amount</th><th>Fee</th><th>Status</th></tr>
+    {% for w in page_obj %}
+    <tr>
+        <td>{{ w.created_at }}</td>
+        <td>{{ w.coin }}</td>
+        <td>{{ w.amount }}</td>
+        <td>{{ w.fee }}</td>
+        <td>{{ w.status }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No withdrawals yet.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

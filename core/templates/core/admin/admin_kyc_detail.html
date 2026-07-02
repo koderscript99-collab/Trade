@@ -1,0 +1,26 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Review KYC{% endblock %}
+{% block content %}
+<h1>KYC Submission - {{ kyc.user.username }}</h1>
+<ul>
+    <li>Document Type: {{ kyc.document_type }}</li>
+    <li>Status: {{ kyc.status }}</li>
+    <li>Submitted: {{ kyc.submitted_at }}</li>
+</ul>
+<p><strong>Document:</strong><br><img src="{{ kyc.document.url }}" alt="Document" width="300"></p>
+<p><strong>Selfie:</strong><br><img src="{{ kyc.selfie.url }}" alt="Selfie" width="300"></p>
+
+{% if kyc.status == "pending" %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Decision</button>
+</form>
+{% else %}
+<p>This submission has already been {{ kyc.status }}.</p>
+{% endif %}
+
+<a href="{% url 'core:admin_kyc_list' %}">Back to KYC List</a>
+{% endblock %}
+

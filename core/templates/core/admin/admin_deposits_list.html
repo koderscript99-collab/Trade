@@ -1,0 +1,40 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Deposits{% endblock %}
+{% block content %}
+<h1>Deposits</h1>
+<p>
+    Filter:
+    <a href="?status=pending">Pending</a> |
+    <a href="?status=approved">Approved</a> |
+    <a href="?status=rejected">Rejected</a> |
+    <a href="?status=all">All</a>
+    (Current: {{ status }})
+</p>
+<table border="1">
+    <tr><th>User</th><th>Wallet</th><th>Amount</th><th>TxID</th><th>Status</th><th>Date</th><th></th></tr>
+    {% for d in page_obj %}
+    <tr>
+        <td>{{ d.user.username }}</td>
+        <td>{{ d.wallet.coin }}</td>
+        <td>{{ d.amount }}</td>
+        <td>{{ d.txid }}</td>
+        <td>{{ d.status }}</td>
+        <td>{{ d.created_at }}</td>
+        <td><a href="{% url 'core:admin_deposit_detail' d.pk %}">Review</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7">No deposits found.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?status={{ status }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?status={{ status }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

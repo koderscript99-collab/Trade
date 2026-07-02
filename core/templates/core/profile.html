@@ -1,0 +1,18 @@
+
+{% extends "core/base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h1>My Profile</h1>
+<ul>
+    <li>Username: {{ user_obj.username }}</li>
+    <li>Email: {{ user_obj.email }} {% if user_obj.email_verified %}(Verified){% else %}(Not Verified){% endif %}</li>
+    <li>Phone: {{ user_obj.phone }} {% if user_obj.phone_verified %}(Verified){% else %}(Not Verified){% endif %}</li>
+    <li>Country: {{ user_obj.country }}</li>
+    <li>Referral Code: {{ user_obj.referral_code }}</li>
+    <li>KYC Verified: {{ user_obj.kyc_verified }}</li>
+    <li>2FA Enabled: {{ user_obj.two_factor_enabled }}</li>
+    <li>Joined: {{ user_obj.created_at }}</li>
+</ul>
+<a href="{% url 'core:profile_edit' %}">Edit Profile</a> |
+<a href="{% url 'core:change_password' %}">Change Password</a>
+{% endblock %}

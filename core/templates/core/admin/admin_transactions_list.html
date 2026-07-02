@@ -1,0 +1,39 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block content %}
+<h1>All Transactions</h1>
+<p>
+    Filter by type:
+    <a href="?type=deposit">Deposit</a> |
+    <a href="?type=withdrawal">Withdrawal</a> |
+    <a href="?type=investment">Investment</a> |
+    <a href="?type=profit">Profit</a> |
+    <a href="?type=referral">Referral</a> |
+    <a href="{% url 'core:admin_transactions_list' %}">All</a>
+</p>
+<table border="1">
+    <tr><th>User</th><th>Type</th><th>Amount</th><th>Description</th><th>Date</th></tr>
+    {% for tx in page_obj %}
+    <tr>
+        <td>{{ tx.user.username }}</td>
+        <td>{{ tx.transaction_type }}</td>
+        <td>{{ tx.amount }}</td>
+        <td>{{ tx.description }}</td>
+        <td>{{ tx.created_at }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No transactions found.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

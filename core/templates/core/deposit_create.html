@@ -1,0 +1,67 @@
+
+{% extends "core/base.html" %}
+{% block title %}New Deposit{% endblock %}
+{% block content %}
+<h1>New Deposit</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Deposit</button>
+</form>
+
+<h2>Wallet Address</h2>
+<p id="wallet-coin-label">Select a wallet above to see its deposit address.</p>
+<p>
+    Address: <span id="wallet-address">-</span>
+    <button type="button" id="copy-address-btn" onclick="copyWalletAddress()">Copy</button>
+</p>
+<div id="wallet-qr-wrapper"></div>
+
+<a href="{% url 'core:deposit_list' %}">Back to Deposits</a>
+
+<script id="wallets-data" type="application/json">{{ wallets_data_json|safe }}</script>
+<script>
+    var walletsData = JSON.parse(document.getElementById("wallets-data").textContent || "{}");
+
+    function updateWalletDisplay() {
+        var select = document.getElementById("id_wallet");
+        if (!select) { return; }
+        var walletId = select.value;
+        var data = walletsData[walletId];
+
+        var coinLabel = document.getElementById("wallet-coin-label");
+        var addressSpan = document.getElementById("wallet-address");
+        var qrWrapper = document.getElementById("wallet-qr-wrapper");
+
+        if (data) {
+            coinLabel.textContent = "Coin: " + data.coin;
+            addressSpan.textContent = data.address;
+            qrWrapper.innerHTML = data.qr
+                ? '<img src="' + data.qr + '" alt="QR Code" width="200">'
+                : "";
+        } else {
+            coinLabel.textContent = "Select a wallet above to see its deposit address.";
+            addressSpan.textContent = "-";
+            qrWrapper.innerHTML = "";
+        }
+    }
+
+    function copyWalletAddress() {
+        var addressSpan = document.getElementById("wallet-address");
+        var text = addressSpan.textContent;
+        if (!text || text === "-") { return; }
+        navigator.clipboard.writeText(text).then(function () {
+            alert("Address copied to clipboard.");
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var select = document.getElementById("id_wallet");
+        if (select) {
+            select.addEventListener("change", updateWalletDisplay);
+            updateWalletDisplay();
+        }
+    });
+</script>
+{% endblock %}

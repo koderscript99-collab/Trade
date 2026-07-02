@@ -1,0 +1,13 @@
+
+{% extends "core/base.html" %}
+{% block title %}New Investment{% endblock %}
+{% block content %}
+<h1>Start an Investment</h1>
+<p>Available Balance: {{ user.balance }}</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Invest</button>
+</form>
+<a href="{% url 'core:investment_plans' %}">Back to Plans</a>
+{% endblock %}

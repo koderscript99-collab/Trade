@@ -1,0 +1,40 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Withdrawals{% endblock %}
+{% block content %}
+<h1>Withdrawals</h1>
+<p>
+    Filter:
+    <a href="?status=pending">Pending</a> |
+    <a href="?status=approved">Approved</a> |
+    <a href="?status=rejected">Rejected</a> |
+    <a href="?status=all">All</a>
+    (Current: {{ status }})
+</p>
+<table border="1">
+    <tr><th>User</th><th>Coin</th><th>Amount</th><th>Fee</th><th>Status</th><th>Date</th><th></th></tr>
+    {% for w in page_obj %}
+    <tr>
+        <td>{{ w.user.username }}</td>
+        <td>{{ w.coin }}</td>
+        <td>{{ w.amount }}</td>
+        <td>{{ w.fee }}</td>
+        <td>{{ w.status }}</td>
+        <td>{{ w.created_at }}</td>
+        <td><a href="{% url 'core:admin_withdrawal_detail' w.pk %}">Review</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7">No withdrawals found.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?status={{ status }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?status={{ status }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

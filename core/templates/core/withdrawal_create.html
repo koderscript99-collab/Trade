@@ -1,0 +1,13 @@
+
+{% extends "core/base.html" %}
+{% block title %}New Withdrawal{% endblock %}
+{% block content %}
+<h1>New Withdrawal</h1>
+<p>Available Balance: {{ user.balance }}</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Request Withdrawal</button>
+</form>
+<a href="{% url 'core:withdrawal_list' %}">Back to Withdrawals</a>
+{% endblock %}

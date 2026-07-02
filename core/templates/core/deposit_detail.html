@@ -1,0 +1,17 @@
+
+{% extends "core/base.html" %}
+{% block title %}Deposit Detail{% endblock %}
+{% block content %}
+<h1>Deposit #{{ deposit.id }}</h1>
+<ul>
+    <li>Wallet: {{ deposit.wallet.coin }}</li>
+    <li>Amount: {{ deposit.amount }}</li>
+    <li>Transaction ID: {{ deposit.txid }}</li>
+    <li>Status: {{ deposit.status }}</li>
+    <li>Submitted: {{ deposit.created_at }}</li>
+</ul>
+{% if deposit.proof %}
+<p><img src="{{ deposit.proof.url }}" alt="Proof of payment" width="300"></p>
+{% endif %}
+<a href="{% url 'core:deposit_list' %}">Back to Deposits</a>
+{% endblock %}

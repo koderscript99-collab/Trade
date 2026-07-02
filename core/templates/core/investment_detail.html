@@ -1,0 +1,16 @@
+
+{% extends "core/base.html" %}
+{% block title %}Investment Detail{% endblock %}
+{% block content %}
+<h1>Investment #{{ investment.id }}</h1>
+<ul>
+    <li>Plan: {{ investment.plan.name }}</li>
+    <li>Amount: {{ investment.amount }}</li>
+    <li>Expected Profit: {{ investment.expected_profit }}</li>
+    <li>Total Return: {{ investment.total_return }}</li>
+    <li>Status: {{ investment.status }}</li>
+    <li>Started: {{ investment.started_at }}</li>
+    <li>Ends: {{ investment.ends_at }}</li>
+</ul>
+<a href="{% url 'core:investment_list' %}">Back to Investments</a>
+{% endblock %}

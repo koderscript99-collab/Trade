@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Crypto Platform{% endblock %}</title>
+</head>
+<body>
+
+<nav>
+    <a href="{% url 'core:landing' %}">Home</a> |
+    <a href="{% url 'core:investment_plans' %}">Plans</a> |
+    <a href="{% url 'core:news_list' %}">News</a> |
+    {% if user.is_authenticated %}
+        <a href="{% url 'core:dashboard' %}">Dashboard</a> |
+        <a href="{% url 'core:deposit_list' %}">Deposits</a> |
+        <a href="{% url 'core:withdrawal_list' %}">Withdrawals</a> |
+        <a href="{% url 'core:investment_list' %}">My Investments</a> |
+        <a href="{% url 'core:referral' %}">Referrals</a> |
+        <a href="{% url 'core:notifications' %}">Notifications</a> |
+        <a href="{% url 'core:kyc_status' %}">KYC</a> |
+        <a href="{% url 'core:transactions' %}">Transactions</a> |
+        <a href="{% url 'core:profile' %}">Profile</a> |
+        <a href="{% url 'core:logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'core:login' %}">Login</a> |
+        <a href="{% url 'core:register' %}">Register</a>
+    {% endif %}
+</nav>
+
+<hr>
+
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+<hr>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

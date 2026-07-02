@@ -1,0 +1,12 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}News Form{% endblock %}
+{% block content %}
+<h1>{% if object %}Edit Article{% else %}New Article{% endif %}</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<a href="{% url 'core:admin_news_list' %}">Back to News</a>
+{% endblock %}

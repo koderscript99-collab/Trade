@@ -1,0 +1,39 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}KYC Submissions{% endblock %}
+{% block content %}
+<h1>KYC Submissions</h1>
+<p>
+    Filter:
+    <a href="?status=pending">Pending</a> |
+    <a href="?status=approved">Approved</a> |
+    <a href="?status=rejected">Rejected</a> |
+    <a href="?status=all">All</a>
+    (Current: {{ status }})
+</p>
+<table border="1">
+    <tr><th>User</th><th>Document Type</th><th>Status</th><th>Submitted</th><th></th></tr>
+    {% for k in page_obj %}
+    <tr>
+        <td>{{ k.user.username }}</td>
+        <td>{{ k.document_type }}</td>
+        <td>{{ k.status }}</td>
+        <td>{{ k.submitted_at }}</td>
+        <td><a href="{% url 'core:admin_kyc_detail' k.pk %}">Review</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No submissions found.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?status={{ status }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?status={{ status }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,33 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Review Withdrawal{% endblock %}
+{% block content %}
+<h1>Withdrawal #{{ withdrawal.id }}</h1>
+<ul>
+    <li>User: {{ withdrawal.user.username }}</li>
+    <li>Coin: {{ withdrawal.coin }}</li>
+    <li>Wallet Address: {{ withdrawal.wallet_address }}</li>
+    <li>Amount: {{ withdrawal.amount }}</li>
+    <li>Fee: {{ withdrawal.fee }}</li>
+    <li>Status: {{ withdrawal.status }}</li>
+    <li>Submitted: {{ withdrawal.created_at }}</li>
+</ul>
+
+{% if withdrawal.status == "pending" %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Decision</button>
+</form>
+{% else %}
+<p>This withdrawal has already been {{ withdrawal.status }}.</p>
+{% endif %}
+
+<a href="{% url 'core:admin_withdrawals_list' %}">Back to Withdrawals</a>
+{% endblock %}
+EOF
+
+echo "admin deposits/withdrawals templates done"
+Output
+
+admin deposits/withdrawals templates done

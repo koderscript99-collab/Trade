@@ -1,0 +1,12 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Investment Plan Form{% endblock %}
+{% block content %}
+<h1>{% if object %}Edit Plan{% else %}New Plan{% endif %}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<a href="{% url 'core:admin_plans_list' %}">Back to Plans</a>
+{% endblock %}

@@ -1,0 +1,31 @@
+
+{% extends "core/base.html" %}
+{% block title %}My Investments{% endblock %}
+{% block content %}
+<h1>My Investments</h1>
+<table border="1">
+    <tr><th>Plan</th><th>Amount</th><th>Expected Profit</th><th>Status</th><th>Ends</th><th></th></tr>
+    {% for inv in page_obj %}
+    <tr>
+        <td>{{ inv.plan.name }}</td>
+        <td>{{ inv.amount }}</td>
+        <td>{{ inv.expected_profit }}</td>
+        <td>{{ inv.status }}</td>
+        <td>{{ inv.ends_at }}</td>
+        <td><a href="{% url 'core:investment_detail' inv.pk %}">View</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">No investments yet.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

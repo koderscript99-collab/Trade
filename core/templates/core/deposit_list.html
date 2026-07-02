@@ -1,0 +1,31 @@
+
+{% extends "core/base.html" %}
+{% block title %}My Deposits{% endblock %}
+{% block content %}
+<h1>My Deposits</h1>
+<a href="{% url 'core:deposit_create' %}">New Deposit</a>
+<table border="1">
+    <tr><th>Date</th><th>Wallet</th><th>Amount</th><th>Status</th><th></th></tr>
+    {% for dep in page_obj %}
+    <tr>
+        <td>{{ dep.created_at }}</td>
+        <td>{{ dep.wallet.coin }}</td>
+        <td>{{ dep.amount }}</td>
+        <td>{{ dep.status }}</td>
+        <td><a href="{% url 'core:deposit_detail' dep.pk %}">View</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No deposits yet.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Wallets{% endblock %}
+{% block content %}
+<h1>Deposit Wallets</h1>
+<a href="{% url 'core:admin_wallet_create' %}">Add New Wallet</a>
+<table border="1">
+    <tr><th>Coin</th><th>Address</th><th>Active</th><th></th></tr>
+    {% for wallet in wallets %}
+    <tr>
+        <td>{{ wallet.coin }}</td>
+        <td>{{ wallet.wallet_address }}</td>
+        <td>{{ wallet.active }}</td>
+        <td>
+            <a href="{% url 'core:admin_wallet_update' wallet.pk %}">Edit</a> |
+            <a href="{% url 'core:admin_wallet_delete' wallet.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No wallets yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

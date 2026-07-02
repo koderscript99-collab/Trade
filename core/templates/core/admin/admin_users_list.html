@@ -1,0 +1,37 @@
+
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<h1>Users</h1>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search username, email, phone">
+    <button type="submit">Search</button>
+</form>
+
+<table border="1">
+    <tr><th>Username</th><th>Email</th><th>Balance</th><th>KYC</th><th>Active</th><th></th></tr>
+    {% for u in page_obj %}
+    <tr>
+        <td>{{ u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.balance }}</td>
+        <td>{{ u.kyc_verified }}</td>
+        <td>{{ u.is_active }}</td>
+        <td><a href="{% url 'core:admin_user_detail' u.pk %}">Manage</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">No users found.</td></tr>
+    {% endfor %}
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Review Deposit{% endblock %}
+{% block content %}
+<h1>Deposit #{{ deposit.id }}</h1>
+<ul>
+    <li>User: {{ deposit.user.username }}</li>
+    <li>Wallet: {{ deposit.wallet.coin }}</li>
+    <li>Amount: {{ deposit.amount }}</li>
+    <li>Transaction ID: {{ deposit.txid }}</li>
+    <li>Status: {{ deposit.status }}</li>
+    <li>Submitted: {{ deposit.created_at }}</li>
+</ul>
+{% if deposit.proof %}
+<p><img src="{{ deposit.proof.url }}" alt="Proof" width="300"></p>
+{% endif %}
+
+{% if deposit.status == "pending" %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Decision</button>
+</form>
+{% else %}
+<p>This deposit has already been {{ deposit.status }}.</p>
+{% endif %}
+
+<a href="{% url 'core:admin_deposits_list' %}">Back to Deposits</a>
+{% endblock %}
