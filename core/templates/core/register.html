@@ -1,13 +1,24 @@
 
-cat > register.html <<'EOF'
 {% extends "core/base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-<h1>Create an Account</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
-<p>Already have an account? <a href="{% url 'core:login' %}">Login</a></p>
+<div class="max-w-md mx-auto px-container-padding py-24">
+    <div class="glass-panel p-8 rounded-xl">
+        <div class="text-center mb-8">
+            <span class="material-symbols-outlined text-primary text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
+            <h1 class="font-display-lg text-headline-md">Create an Account</h1>
+            <p class="text-on-surface-variant text-sm mt-1">Start investing in minutes.</p>
+        </div>
+
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary w-full mt-2">Register</button>
+        </form>
+
+        <p class="text-center text-on-surface-variant text-sm mt-6">
+            Already have an account? <a href="{% url 'core:login' %}" class="text-primary font-bold hover:brightness-110">Login</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

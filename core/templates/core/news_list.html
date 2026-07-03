@@ -1,24 +1,37 @@
 
-
 {% extends "core/base.html" %}
 {% block title %}News{% endblock %}
 {% block content %}
-<h1>News</h1>
-<ul>
-    {% for item in page_obj %}
-    <li><a href="{% url 'core:news_detail' item.pk %}">{{ item.title }}</a> - {{ item.created_at }}</li>
-    {% empty %}
-    <li>No news yet.</li>
-    {% endfor %}
-</ul>
+<div class="max-w-4xl mx-auto px-container-padding py-stack-lg">
 
-<div>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <h1 class="font-display-lg text-headline-md mb-8">News</h1>
+
+    <div class="space-y-4 mb-8">
+        {% for item in page_obj %}
+        <a href="{% url 'core:news_detail' item.pk %}" class="block glass-panel p-5 rounded-xl edge-bg-5 transition-colors group">
+            <div class="flex justify-between items-center gap-4">
+                <div>
+                    <span class="text-[10px] font-bold text-primary tracking-widest uppercase">News</span>
+                    <h4 class="font-bold text-on-surface group-hover:text-primary transition-colors mt-1">{{ item.title }}</h4>
+                </div>
+                <span class="text-on-surface-variant text-xs shrink-0">{{ item.created_at|date:"M d, Y" }}</span>
+            </div>
+        </a>
+        {% empty %}
+        <p class="text-on-surface-variant text-sm glass-panel p-6 rounded-xl">No news yet.</p>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="flex items-center justify-center gap-4 text-sm">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary">Previous</a>
+        {% endif %}
+        <span class="text-on-surface-variant">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary">Next</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

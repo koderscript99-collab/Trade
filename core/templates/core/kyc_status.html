@@ -2,18 +2,73 @@
 {% extends "core/base.html" %}
 {% block title %}KYC Status{% endblock %}
 {% block content %}
-<h1>KYC Status</h1>
-{% if kyc %}
-<ul>
-    <li>Document Type: {{ kyc.document_type }}</li>
-    <li>Status: {{ kyc.status }}</li>
-    <li>Submitted: {{ kyc.submitted_at }}</li>
-</ul>
-{% if kyc.status == "rejected" %}
-<a href="{% url 'core:kyc_submit' %}">Resubmit KYC</a>
-{% endif %}
-{% else %}
-<p>You have not submitted KYC documents yet.</p>
-<a href="{% url 'core:kyc_submit' %}">Submit KYC</a>
-{% endif %}
+<div class="max-w-md mx-auto px-container-padding py-stack-lg">
+
+    <h1 class="font-display-lg text-headline-md mb-8 text-center">KYC Verification</h1>
+
+    {% if kyc %}
+    <div class="glass-panel p-8 rounded-xl text-center">
+        <span class="material-symbols-outlined text-5xl mb-4
+            {% if kyc.status == 'approved' %}text-primary
+            {% elif kyc.status == 'rejected' %}text-error
+            {% else %}text-on-surface-variant{% endif %}">
+            {% if kyc.status == 'approved' %}verified_user{% elif kyc.status == 'rejected' %}gpp_bad{% else %}hourglass_top{% endif %}
+        </span>
+        <span class="inline-block text-xs font-bold px-3 py-1.5 rounded-full mb-6
+            {% if kyc.status == 'approved' %}text-primary bg-primary/10
+            {% elif kyc.status == 'rejected' %}text-error bg-error/10
+            {% else %}text-on-surface-variant edge-bg-5{% endif %}">
+            {{ kyc.status|capfirst }}
+        </span>
+
+        <div class="space-y-3 text-left">
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Document Type</span>
+                <span class="text-sm">{{ kyc.document_type }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant text-sm">Submitted</span>
+                <span class="text-sm">{{ kyc.submitted_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+
+        {% if kyc.status == "rejected" %}
+        <a href="{% url 'core:kyc_submit' %}" class="btn-primary w-full mt-8">Resubmit KYC</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="glass-panel p-8 rounded-xl text-center">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant mb-4">badge</span>
+        <p class="text-on-surface-variant mb-6">You have not submitted KYC documents yet.</p>
+        <a href="{% url 'core:kyc_submit' %}" class="btn-primary w-full">Submit KYC</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+EOF
+
+cat > kyc_submit.html <<'EOF'
+{% extends "core/base.html" %}
+{% block title %}Submit KYC{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto px-container-padding py-stack-lg">
+
+    <div class="flex items-center gap-3 mb-8">
+        <a href="{% url 'core:kyc_status' %}" class="w-10 h-10 rounded-lg edge-bg-5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </a>
+        <h1 class="font-display-lg text-headline-md">Submit KYC Documents</h1>
+    </div>
+
+    <div class="glass-panel p-6 md:p-8 rounded-xl">
+        <form method="post" enctype="multipart/form-data" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary w-full mt-2">
+                <span class="material-symbols-outlined text-sm">upload</span>
+                Submit
+            </button>
+        </form>
+    </div>
+</div>
 {% endblock %}

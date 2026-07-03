@@ -2,30 +2,64 @@
 {% extends "core/base.html" %}
 {% block title %}My Investments{% endblock %}
 {% block content %}
-<h1>My Investments</h1>
-<table border="1">
-    <tr><th>Plan</th><th>Amount</th><th>Expected Profit</th><th>Status</th><th>Ends</th><th></th></tr>
-    {% for inv in page_obj %}
-    <tr>
-        <td>{{ inv.plan.name }}</td>
-        <td>{{ inv.amount }}</td>
-        <td>{{ inv.expected_profit }}</td>
-        <td>{{ inv.status }}</td>
-        <td>{{ inv.ends_at }}</td>
-        <td><a href="{% url 'core:investment_detail' inv.pk %}">View</a></td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="6">No investments yet.</td></tr>
-    {% endfor %}
-</table>
+<div class="max-w-4xl mx-auto px-container-padding py-stack-lg">
 
-<div>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="font-display-lg text-headline-md">My Investments</h1>
+        <a href="{% url 'core:investment_plans' %}" class="btn-primary">
+            <span class="material-symbols-outlined text-sm">add</span>
+            New Investment
+        </a>
+    </div>
+
+    <div class="glass-panel rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b edge-b-5 text-on-surface-variant text-xs uppercase tracking-widest">
+                    <th class="text-left font-normal px-4 py-3">Plan</th>
+                    <th class="text-left font-normal px-4 py-3">Amount</th>
+                    <th class="text-left font-normal px-4 py-3">Expected Profit</th>
+                    <th class="text-left font-normal px-4 py-3">Status</th>
+                    <th class="text-left font-normal px-4 py-3">Ends</th>
+                    <th class="px-4 py-3"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in page_obj %}
+                <tr class="border-b edge-b-5 last:border-0">
+                    <td class="px-4 py-3 font-bold">{{ inv.plan.name }}</td>
+                    <td class="px-4 py-3 font-data-md">${{ inv.amount }}</td>
+                    <td class="px-4 py-3 font-data-md text-primary">+${{ inv.expected_profit }}</td>
+                    <td class="px-4 py-3">
+                        <span class="text-xs font-bold px-3 py-1 rounded-full
+                            {% if inv.status == 'running' %}text-primary bg-primary/10
+                            {% elif inv.status == 'cancelled' %}text-error bg-error/10
+                            {% else %}text-on-surface-variant edge-bg-5{% endif %}">
+                            {{ inv.status|capfirst }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-on-surface-variant text-xs">{{ inv.ends_at|date:"M d, Y" }}</td>
+                    <td class="px-4 py-3 text-right">
+                        <a href="{% url 'core:investment_detail' inv.pk %}" class="text-primary font-bold text-xs hover:brightness-110">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="px-4 py-8 text-center text-on-surface-variant text-sm">No investments yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="flex items-center justify-center gap-4 mt-6 text-sm">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary">Previous</a>
+        {% endif %}
+        <span class="text-on-surface-variant">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary">Next</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

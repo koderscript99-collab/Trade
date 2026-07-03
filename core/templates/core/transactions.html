@@ -2,28 +2,48 @@
 {% extends "core/base.html" %}
 {% block title %}Transactions{% endblock %}
 {% block content %}
-<h1>Transaction History</h1>
-<table border="1">
-    <tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th></tr>
-    {% for tx in page_obj %}
-    <tr>
-        <td>{{ tx.created_at }}</td>
-        <td>{{ tx.transaction_type }}</td>
-        <td>{{ tx.amount }}</td>
-        <td>{{ tx.description }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4">No transactions yet.</td></tr>
-    {% endfor %}
-</table>
+<div class="max-w-4xl mx-auto px-container-padding py-stack-lg">
 
-<div>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <h1 class="font-display-lg text-headline-md mb-8">Transaction History</h1>
+
+    <div class="glass-panel rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b edge-b-5 text-on-surface-variant text-xs uppercase tracking-widest">
+                    <th class="text-left font-normal px-4 py-3">Date</th>
+                    <th class="text-left font-normal px-4 py-3">Type</th>
+                    <th class="text-left font-normal px-4 py-3">Description</th>
+                    <th class="text-right font-normal px-4 py-3">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in page_obj %}
+                <tr class="border-b edge-b-5 last:border-0">
+                    <td class="px-4 py-3 text-on-surface-variant text-xs">{{ tx.created_at|date:"M d, Y H:i" }}</td>
+                    <td class="px-4 py-3 font-bold">{{ tx.get_transaction_type_display }}</td>
+                    <td class="px-4 py-3 text-on-surface-variant">{{ tx.description }}</td>
+                    <td class="px-4 py-3 text-right font-data-md font-bold
+                        {% if tx.transaction_type == 'withdrawal' %}text-error{% else %}text-primary{% endif %}">
+                        {% if tx.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}${{ tx.amount }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="px-4 py-8 text-center text-on-surface-variant text-sm">No transactions yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="flex items-center justify-center gap-4 mt-6 text-sm">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary">Previous</a>
+        {% endif %}
+        <span class="text-on-surface-variant">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary">Next</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

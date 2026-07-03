@@ -2,15 +2,51 @@
 {% extends "core/base.html" %}
 {% block title %}Investment Detail{% endblock %}
 {% block content %}
-<h1>Investment #{{ investment.id }}</h1>
-<ul>
-    <li>Plan: {{ investment.plan.name }}</li>
-    <li>Amount: {{ investment.amount }}</li>
-    <li>Expected Profit: {{ investment.expected_profit }}</li>
-    <li>Total Return: {{ investment.total_return }}</li>
-    <li>Status: {{ investment.status }}</li>
-    <li>Started: {{ investment.started_at }}</li>
-    <li>Ends: {{ investment.ends_at }}</li>
-</ul>
-<a href="{% url 'core:investment_list' %}">Back to Investments</a>
+<div class="max-w-2xl mx-auto px-container-padding py-stack-lg">
+
+    <div class="flex items-center gap-3 mb-8">
+        <a href="{% url 'core:investment_list' %}" class="w-10 h-10 rounded-lg edge-bg-5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </a>
+        <h1 class="font-display-lg text-headline-md">Investment #{{ investment.id }}</h1>
+    </div>
+
+    <div class="glass-panel p-6 md:p-8 rounded-xl">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <p class="text-on-surface-variant text-sm">{{ investment.plan.name }}</p>
+                <p class="font-data-lg text-2xl font-bold">${{ investment.amount }}</p>
+            </div>
+            <span class="text-xs font-bold px-3 py-1.5 rounded-full
+                {% if investment.status == 'running' %}text-primary bg-primary/10
+                {% elif investment.status == 'cancelled' %}text-error bg-error/10
+                {% else %}text-on-surface-variant edge-bg-5{% endif %}">
+                {{ investment.status|capfirst }}
+            </span>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Expected Profit</span>
+                <span class="font-data-md text-sm text-primary font-bold">+${{ investment.expected_profit }}</span>
+            </div>
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Total Return</span>
+                <span class="font-data-md text-sm font-bold">${{ investment.total_return }}</span>
+            </div>
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Started</span>
+                <span class="font-data-md text-sm">{{ investment.started_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant text-sm">Ends</span>
+                <span class="font-data-md text-sm">{{ investment.ends_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'core:investment_list' %}" class="block text-center text-on-surface-variant text-sm mt-6 hover:text-primary transition-colors">
+        Back to Investments
+    </a>
+</div>
 {% endblock %}

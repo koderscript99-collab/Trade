@@ -1,24 +1,50 @@
 
+
 {% extends "core/base.html" %}
 {% block title %}New Deposit{% endblock %}
 {% block content %}
-<h1>New Deposit</h1>
+<div class="max-w-2xl mx-auto px-container-padding py-stack-lg">
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Deposit</button>
-</form>
+    <div class="flex items-center gap-3 mb-8">
+        <a href="{% url 'core:deposit_list' %}" class="w-10 h-10 rounded-lg edge-bg-5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </a>
+        <h1 class="font-display-lg text-headline-md">New Deposit</h1>
+    </div>
 
-<h2>Wallet Address</h2>
-<p id="wallet-coin-label">Select a wallet above to see its deposit address.</p>
-<p>
-    Address: <span id="wallet-address">-</span>
-    <button type="button" id="copy-address-btn" onclick="copyWalletAddress()">Copy</button>
-</p>
-<div id="wallet-qr-wrapper"></div>
+    <div class="glass-panel p-6 md:p-8 rounded-xl mb-6">
+        <form method="post" enctype="multipart/form-data" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary w-full mt-2">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                Submit Deposit
+            </button>
+        </form>
+    </div>
 
-<a href="{% url 'core:deposit_list' %}">Back to Deposits</a>
+    <div class="glass-panel p-6 md:p-8 rounded-xl">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+            <h2 class="font-headline-sm text-headline-sm">Deposit Wallet</h2>
+        </div>
+        <p id="wallet-coin-label" class="text-on-surface-variant text-sm mb-4">Select a wallet above to see its deposit address.</p>
+
+        <div class="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 mb-4">
+            <span id="wallet-address" class="flex-1 font-data-md text-sm break-all">-</span>
+            <button type="button" id="copy-address-btn" onclick="copyWalletAddress()"
+                    class="shrink-0 text-primary text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary hover:text-on-primary transition-all">
+                Copy
+            </button>
+        </div>
+
+        <div id="wallet-qr-wrapper" class="flex justify-center"></div>
+    </div>
+
+    <a href="{% url 'core:deposit_list' %}" class="block text-center text-on-surface-variant text-sm mt-6 hover:text-primary transition-colors">
+        Back to Deposits
+    </a>
+</div>
 
 <script id="wallets-data" type="application/json">{{ wallets_data_json|safe }}</script>
 <script>
@@ -38,7 +64,7 @@
             coinLabel.textContent = "Coin: " + data.coin;
             addressSpan.textContent = data.address;
             qrWrapper.innerHTML = data.qr
-                ? '<img src="' + data.qr + '" alt="QR Code" width="200">'
+                ? '<img src="' + data.qr + '" alt="QR Code" class="rounded-lg" width="200">'
                 : "";
         } else {
             coinLabel.textContent = "Select a wallet above to see its deposit address.";

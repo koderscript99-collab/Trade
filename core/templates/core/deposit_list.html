@@ -2,30 +2,62 @@
 {% extends "core/base.html" %}
 {% block title %}My Deposits{% endblock %}
 {% block content %}
-<h1>My Deposits</h1>
-<a href="{% url 'core:deposit_create' %}">New Deposit</a>
-<table border="1">
-    <tr><th>Date</th><th>Wallet</th><th>Amount</th><th>Status</th><th></th></tr>
-    {% for dep in page_obj %}
-    <tr>
-        <td>{{ dep.created_at }}</td>
-        <td>{{ dep.wallet.coin }}</td>
-        <td>{{ dep.amount }}</td>
-        <td>{{ dep.status }}</td>
-        <td><a href="{% url 'core:deposit_detail' dep.pk %}">View</a></td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">No deposits yet.</td></tr>
-    {% endfor %}
-</table>
+<div class="max-w-4xl mx-auto px-container-padding py-stack-lg">
 
-<div>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="font-display-lg text-headline-md">My Deposits</h1>
+        <a href="{% url 'core:deposit_create' %}" class="btn-primary">
+            <span class="material-symbols-outlined text-sm">add</span>
+            New Deposit
+        </a>
+    </div>
+
+    <div class="glass-panel rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b edge-b-5 text-on-surface-variant text-xs uppercase tracking-widest">
+                    <th class="text-left font-normal px-4 py-3">Date</th>
+                    <th class="text-left font-normal px-4 py-3">Wallet</th>
+                    <th class="text-left font-normal px-4 py-3">Amount</th>
+                    <th class="text-left font-normal px-4 py-3">Status</th>
+                    <th class="px-4 py-3"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dep in page_obj %}
+                <tr class="border-b edge-b-5 last:border-0">
+                    <td class="px-4 py-3 text-on-surface-variant text-xs">{{ dep.created_at|date:"M d, Y H:i" }}</td>
+                    <td class="px-4 py-3">{{ dep.wallet.coin }}</td>
+                    <td class="px-4 py-3 font-data-md font-bold">${{ dep.amount }}</td>
+                    <td class="px-4 py-3">
+                        <span class="text-xs font-bold px-3 py-1 rounded-full
+                            {% if dep.status == 'approved' %}text-primary bg-primary/10
+                            {% elif dep.status == 'rejected' %}text-error bg-error/10
+                            {% else %}text-on-surface-variant edge-bg-5{% endif %}">
+                            {{ dep.status|capfirst }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                        <a href="{% url 'core:deposit_detail' dep.pk %}" class="text-primary font-bold text-xs hover:brightness-110">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant text-sm">No deposits yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="flex items-center justify-center gap-4 mt-6 text-sm">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary">Previous</a>
+        {% endif %}
+        <span class="text-on-surface-variant">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary">Next</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

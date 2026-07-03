@@ -2,16 +2,54 @@
 {% extends "core/base.html" %}
 {% block title %}Deposit Detail{% endblock %}
 {% block content %}
-<h1>Deposit #{{ deposit.id }}</h1>
-<ul>
-    <li>Wallet: {{ deposit.wallet.coin }}</li>
-    <li>Amount: {{ deposit.amount }}</li>
-    <li>Transaction ID: {{ deposit.txid }}</li>
-    <li>Status: {{ deposit.status }}</li>
-    <li>Submitted: {{ deposit.created_at }}</li>
-</ul>
-{% if deposit.proof %}
-<p><img src="{{ deposit.proof.url }}" alt="Proof of payment" width="300"></p>
-{% endif %}
-<a href="{% url 'core:deposit_list' %}">Back to Deposits</a>
+<div class="max-w-2xl mx-auto px-container-padding py-stack-lg">
+
+    <div class="flex items-center gap-3 mb-8">
+        <a href="{% url 'core:deposit_list' %}" class="w-10 h-10 rounded-lg edge-bg-5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </a>
+        <h1 class="font-display-lg text-headline-md">Deposit #{{ deposit.id }}</h1>
+    </div>
+
+    <div class="glass-panel p-6 md:p-8 rounded-xl mb-6">
+        <div class="flex items-center justify-between mb-6">
+            <span class="font-data-lg text-2xl font-bold">${{ deposit.amount }}</span>
+            <span class="text-xs font-bold px-3 py-1.5 rounded-full
+                {% if deposit.status == 'approved' %}text-primary bg-primary/10
+                {% elif deposit.status == 'rejected' %}text-error bg-error/10
+                {% else %}text-on-surface-variant edge-bg-5{% endif %}">
+                {{ deposit.status|capfirst }}
+            </span>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Wallet</span>
+                <span class="font-data-md text-sm">{{ deposit.wallet.coin }}</span>
+            </div>
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Transaction ID</span>
+                <span class="font-data-md text-sm break-all text-right">{{ deposit.txid }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant text-sm">Submitted</span>
+                <span class="font-data-md text-sm">{{ deposit.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if deposit.proof %}
+    <div class="glass-panel p-6 md:p-8 rounded-xl mb-6">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary">receipt_long</span>
+            <h2 class="font-headline-sm text-headline-sm">Proof of Payment</h2>
+        </div>
+        <img src="{{ deposit.proof.url }}" alt="Proof of payment" class="rounded-lg w-full max-w-sm mx-auto">
+    </div>
+    {% endif %}
+
+    <a href="{% url 'core:deposit_list' %}" class="block text-center text-on-surface-variant text-sm hover:text-primary transition-colors">
+        Back to Deposits
+    </a>
+</div>
 {% endblock %}

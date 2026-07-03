@@ -1,21 +1,51 @@
 
+
 {% extends "core/base.html" %}
 {% block title %}Investment Plans{% endblock %}
 {% block content %}
-<h1>Investment Plans</h1>
-<table border="1">
-    <tr><th>Name</th><th>ROI</th><th>Duration</th><th>Min</th><th>Max</th><th></th></tr>
-    {% for plan in plans %}
-    <tr>
-        <td>{{ plan.name }}</td>
-        <td>{{ plan.roi }}%</td>
-        <td>{{ plan.duration_days }} days</td>
-        <td>{{ plan.minimum }}</td>
-        <td>{{ plan.maximum }}</td>
-        <td><a href="{% url 'core:investment_create' %}?plan={{ plan.id }}">Invest</a></td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="6">No active plans.</td></tr>
-    {% endfor %}
-</table>
+<div class="max-w-max-desktop mx-auto px-container-padding py-stack-lg">
+
+    <h1 class="font-display-lg text-headline-md mb-2">Investment Plans</h1>
+    <p class="text-on-surface-variant mb-8">Choose a plan that fits your capital and timeline.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+        {% for plan in plans %}
+        <div class="glass-panel p-8 rounded-xl flex flex-col">
+            <div class="flex justify-between items-start mb-6">
+                <div class="bg-primary/10 p-3 rounded-lg text-primary">
+                    <span class="material-symbols-outlined text-3xl">bolt</span>
+                </div>
+                <span class="text-primary font-data-md text-data-md">{{ plan.roi }}% ROI</span>
+            </div>
+            <h3 class="font-headline-sm text-headline-sm mb-2">{{ plan.name }}</h3>
+            <p class="text-on-surface-variant text-body-md mb-8">Fixed-term plan with a {{ plan.duration_days }}-day maturity window.</p>
+            <div class="space-y-4 mb-10 mt-auto">
+                <div class="flex justify-between border-b edge-b-5 pb-2">
+                    <span class="text-on-surface-variant">Duration</span>
+                    <span class="font-data-md text-data-md">{{ plan.duration_days }} Days</span>
+                </div>
+                <div class="flex justify-between border-b edge-b-5 pb-2">
+                    <span class="text-on-surface-variant">Min Deposit</span>
+                    <span class="font-data-md text-data-md">${{ plan.minimum }}</span>
+                </div>
+                <div class="flex justify-between border-b edge-b-5 pb-2">
+                    <span class="text-on-surface-variant">Max Limit</span>
+                    <span class="font-data-md text-data-md">${{ plan.maximum }}</span>
+                </div>
+            </div>
+            {% if user.is_authenticated %}
+            <a href="{% url 'core:investment_create' %}?plan={{ plan.id }}" class="btn-primary w-full">
+                Invest Now
+            </a>
+            {% else %}
+            <a href="{% url 'core:login' %}?next={% url 'core:investment_create' %}%3Fplan%3D{{ plan.id }}" class="btn-secondary w-full">
+                Login to Invest
+            </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-on-surface-variant col-span-3">No active plans at the moment.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

@@ -2,29 +2,76 @@
 {% extends "core/base.html" %}
 {% block title %}Referrals{% endblock %}
 {% block content %}
-<h1>Referrals</h1>
-<p>Your Referral Link: {{ referral_link }}</p>
+<div class="max-w-4xl mx-auto px-container-padding py-stack-lg">
 
-<h2>Your Referrals</h2>
-<ul>
-    {% for ref in referrals %}
-    <li>{{ ref.username }} - Joined {{ ref.created_at }}</li>
-    {% empty %}
-    <li>You have not referred anyone yet.</li>
-    {% endfor %}
-</ul>
+    <h1 class="font-display-lg text-headline-md mb-8">Referrals</h1>
 
-<h2>Commissions Earned</h2>
-<table border="1">
-    <tr><th>Date</th><th>From</th><th>Amount</th></tr>
-    {% for c in commissions %}
-    <tr>
-        <td>{{ c.created_at }}</td>
-        <td>{{ c.referred_user.username }}</td>
-        <td>{{ c.amount }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="3">No commissions yet.</td></tr>
-    {% endfor %}
-</table>
+    <div class="glass-panel p-6 md:p-8 rounded-xl mb-8">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-primary">group</span>
+            <h2 class="font-headline-sm text-headline-sm">Your Referral Link</h2>
+        </div>
+        <div class="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-4 py-3">
+            <span id="referral-link" class="flex-1 font-data-md text-sm break-all">{{ referral_link }}</span>
+            <button type="button" onclick="copyReferralLink()"
+                    class="shrink-0 text-primary text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary hover:text-on-primary transition-all">
+                Copy
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="font-headline-md text-headline-md mb-4">Your Referrals</h2>
+        <div class="space-y-3">
+            {% for ref in referrals %}
+            <div class="glass-panel p-4 rounded-xl flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+                    {{ ref.username|first|upper }}
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-on-surface">{{ ref.username }}</p>
+                    <p class="text-on-surface-variant text-xs">Joined {{ ref.created_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-on-surface-variant text-sm glass-panel p-4 rounded-xl">You have not referred anyone yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <h2 class="font-headline-md text-headline-md mb-4">Commissions Earned</h2>
+        <div class="glass-panel rounded-xl overflow-hidden">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b edge-b-5 text-on-surface-variant text-xs uppercase tracking-widest">
+                        <th class="text-left font-normal px-4 py-3">Date</th>
+                        <th class="text-left font-normal px-4 py-3">From</th>
+                        <th class="text-right font-normal px-4 py-3">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in commissions %}
+                    <tr class="border-b edge-b-5 last:border-0">
+                        <td class="px-4 py-3 text-on-surface-variant text-xs">{{ c.created_at|date:"M d, Y H:i" }}</td>
+                        <td class="px-4 py-3">{{ c.referred_user.username }}</td>
+                        <td class="px-4 py-3 text-right font-data-md font-bold text-primary">+${{ c.amount }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="px-4 py-8 text-center text-on-surface-variant text-sm">No commissions yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyReferralLink() {
+        var text = document.getElementById("referral-link").textContent;
+        navigator.clipboard.writeText(text).then(function () {
+            alert("Referral link copied to clipboard.");
+        });
+    }
+</script>
 {% endblock %}

@@ -2,17 +2,76 @@
 {% extends "core/base.html" %}
 {% block title %}Profile{% endblock %}
 {% block content %}
-<h1>My Profile</h1>
-<ul>
-    <li>Username: {{ user_obj.username }}</li>
-    <li>Email: {{ user_obj.email }} {% if user_obj.email_verified %}(Verified){% else %}(Not Verified){% endif %}</li>
-    <li>Phone: {{ user_obj.phone }} {% if user_obj.phone_verified %}(Verified){% else %}(Not Verified){% endif %}</li>
-    <li>Country: {{ user_obj.country }}</li>
-    <li>Referral Code: {{ user_obj.referral_code }}</li>
-    <li>KYC Verified: {{ user_obj.kyc_verified }}</li>
-    <li>2FA Enabled: {{ user_obj.two_factor_enabled }}</li>
-    <li>Joined: {{ user_obj.created_at }}</li>
-</ul>
-<a href="{% url 'core:profile_edit' %}">Edit Profile</a> |
-<a href="{% url 'core:change_password' %}">Change Password</a>
+<div class="max-w-2xl mx-auto px-container-padding py-stack-lg">
+
+    <div class="flex flex-col items-center text-center mb-8">
+        <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center text-3xl font-bold mb-4">
+            {{ user_obj.username|first|upper }}
+        </div>
+        <h1 class="font-display-lg text-headline-md">{{ user_obj.username }}</h1>
+        <p class="text-on-surface-variant text-sm">Member since {{ user_obj.created_at|date:"M Y" }}</p>
+    </div>
+
+    <div class="glass-panel p-6 md:p-8 rounded-xl mb-6">
+        <div class="space-y-4">
+            <div class="flex justify-between items-center border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Email</span>
+                <span class="text-sm flex items-center gap-2">
+                    {{ user_obj.email }}
+                    {% if user_obj.email_verified %}
+                    <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">Verified</span>
+                    {% else %}
+                    <span class="text-on-surface-variant text-xs font-bold edge-bg-5 px-2 py-0.5 rounded-full">Unverified</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="flex justify-between items-center border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Phone</span>
+                <span class="text-sm flex items-center gap-2">
+                    {{ user_obj.phone|default:"—" }}
+                    {% if user_obj.phone_verified %}
+                    <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">Verified</span>
+                    {% else %}
+                    <span class="text-on-surface-variant text-xs font-bold edge-bg-5 px-2 py-0.5 rounded-full">Unverified</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Country</span>
+                <span class="text-sm">{{ user_obj.country|default:"—" }}</span>
+            </div>
+            <div class="flex justify-between border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">Referral Code</span>
+                <span class="font-data-md text-sm text-primary">{{ user_obj.referral_code }}</span>
+            </div>
+            <div class="flex justify-between items-center border-b edge-b-5 pb-3">
+                <span class="text-on-surface-variant text-sm">KYC Status</span>
+                {% if user_obj.kyc_verified %}
+                <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">Verified</span>
+                {% else %}
+                <span class="text-on-surface-variant text-xs font-bold edge-bg-5 px-2 py-0.5 rounded-full">Not Verified</span>
+                {% endif %}
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-on-surface-variant text-sm">Two-Factor Authentication</span>
+                {% if user_obj.two_factor_enabled %}
+                <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">Enabled</span>
+                {% else %}
+                <span class="text-on-surface-variant text-xs font-bold edge-bg-5 px-2 py-0.5 rounded-full">Disabled</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+        <a href="{% url 'core:profile_edit' %}" class="btn-primary flex-1">
+            <span class="material-symbols-outlined text-sm">edit</span>
+            Edit Profile
+        </a>
+        <a href="{% url 'core:change_password' %}" class="btn-secondary flex-1">
+            <span class="material-symbols-outlined text-sm">lock</span>
+            Change Password
+        </a>
+    </div>
+</div>
 {% endblock %}

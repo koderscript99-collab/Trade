@@ -1,12 +1,25 @@
 
+
 {% extends "core/base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<h1>Login</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
-<p>No account yet? <a href="{% url 'core:register' %}">Register</a></p>
+<div class="max-w-md mx-auto px-container-padding py-24">
+    <div class="glass-panel p-8 rounded-xl">
+        <div class="text-center mb-8">
+            <span class="material-symbols-outlined text-primary text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
+            <h1 class="font-display-lg text-headline-md">Welcome Back</h1>
+            <p class="text-on-surface-variant text-sm mt-1">Log in to manage your investments.</p>
+        </div>
+
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary w-full mt-2">Login</button>
+        </form>
+
+        <p class="text-center text-on-surface-variant text-sm mt-6">
+            No account yet? <a href="{% url 'core:register' %}" class="text-primary font-bold hover:brightness-110">Register</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

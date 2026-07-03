@@ -2,12 +2,33 @@
 {% extends "core/base.html" %}
 {% block title %}New Withdrawal{% endblock %}
 {% block content %}
-<h1>New Withdrawal</h1>
-<p>Available Balance: {{ user.balance }}</p>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Request Withdrawal</button>
-</form>
-<a href="{% url 'core:withdrawal_list' %}">Back to Withdrawals</a>
+<div class="max-w-2xl mx-auto px-container-padding py-stack-lg">
+
+    <div class="flex items-center gap-3 mb-8">
+        <a href="{% url 'core:withdrawal_list' %}" class="w-10 h-10 rounded-lg edge-bg-5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </a>
+        <h1 class="font-display-lg text-headline-md">New Withdrawal</h1>
+    </div>
+
+    <div class="glass-panel p-6 rounded-xl mb-6 flex items-center justify-between">
+        <span class="text-on-surface-variant text-sm">Available Balance</span>
+        <span class="font-data-lg text-xl font-bold text-primary">${{ user.balance }}</span>
+    </div>
+
+    <div class="glass-panel p-6 md:p-8 rounded-xl">
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary w-full mt-2">
+                <span class="material-symbols-outlined text-sm">north_east</span>
+                Request Withdrawal
+            </button>
+        </form>
+    </div>
+
+    <a href="{% url 'core:withdrawal_list' %}" class="block text-center text-on-surface-variant text-sm mt-6 hover:text-primary transition-colors">
+        Back to Withdrawals
+    </a>
+</div>
 {% endblock %}
