@@ -1,16 +1,104 @@
-
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>Admin Login</title></head>
-<body>
-<h1>Admin Login</h1>
-{% if messages %}
-<ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-{% endif %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login | PRO-TRADE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "on-surface-variant": "#bbcabf", "surface-bright": "#31394d",
+        "surface-variant": "#2d3449", "surface-container-low": "#131b2e",
+        "error-container": "#93000a", "on-error": "#690005",
+        "primary": "#4edea3", "on-background": "#dae2fd",
+        "on-primary-container": "#00422b", "on-surface": "#dae2fd",
+        "surface-container-high": "#222a3d", "primary-container": "#10b981",
+        "inverse-on-surface": "#283044", "error": "#ffb4ab",
+        "surface-tint": "#4edea3", "on-error-container": "#ffdad6",
+        "tertiary": "#7bd0ff", "surface-dim": "#0b1326",
+        "surface-container-lowest": "#060e20", "secondary": "#ffb2b7",
+        "on-primary": "#003824", "surface": "#0b1326",
+        "outline-variant": "#3c4a42", "surface-container-highest": "#2d3449",
+        "surface-container": "#171f33", "background": "#0b1326"
+      },
+      fontFamily: {
+        "headline-md": ["Inter"], "headline-sm": ["Inter"],
+        "label-caps": ["Inter"], "display-lg": ["Inter"],
+        "data-md": ["JetBrains Mono"], "body-md": ["Inter"],
+        "body-lg": ["Inter"], "data-lg": ["JetBrains Mono"]
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background-color: #0b1326; color: #dae2fd; -webkit-font-smoothing: antialiased; }
+  .glass-panel { background: rgba(30,41,59,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(78,222,163,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(78,222,163,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+</style>
+</head>
+<body class="font-body-md text-body-md min-h-screen flex items-center justify-center p-6 bg-grid relative overflow-hidden">
+
+  <!-- Ambient glow -->
+  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+  <div class="relative z-10 w-full max-w-sm">
+
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold text-primary tracking-tighter">PRO-TRADE</h1>
+      <p class="text-[11px] uppercase tracking-widest text-on-surface-variant/60 font-bold mt-1">Institutional Admin</p>
+    </div>
+
+    <div class="glass-panel rounded-xl p-6 sm:p-8">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-primary">shield_person</span>
+        <h2 class="text-base font-bold text-on-surface">Sign in</h2>
+      </div>
+
+      {% if messages %}
+      <div class="space-y-2 mb-5">
+        {% for message in messages %}
+        <div class="rounded-lg px-4 py-2.5 text-xs font-medium border
+          {% if message.tags == 'error' %}border-error/40 bg-error/10 text-error
+          {% elif message.tags == 'success' %}border-primary/40 bg-primary/10 text-primary
+          {% else %}border-white/10 bg-surface-variant/40 text-on-surface{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="[&_input]:w-full [&_input]:bg-surface-container-high [&_input]:border-outline-variant [&_input]:text-on-surface
+                    [&_input]:rounded-md [&_input]:text-sm [&_input]:px-3 [&_input]:py-2.5
+                    [&_input:focus]:border-primary [&_input:focus]:ring-primary [&_input:focus]:ring-1
+                    [&_label]:text-xs [&_label]:font-bold [&_label]:text-on-surface-variant [&_label]:uppercase [&_label]:tracking-wide [&_label]:mb-1.5 [&_label]:block
+                    [&_p]:mb-4 [&_p:last-child]:mb-0">
+          {{ form.as_p }}
+        </div>
+
+        <button type="submit"
+                class="w-full inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-bold text-sm px-5 py-2.5 rounded-md hover:brightness-110 transition-all mt-2">
+          <span class="material-symbols-outlined text-lg">login</span>Login
+        </button>
+      </form>
+    </div>
+
+    <p class="text-center text-[11px] text-on-surface-variant/50 mt-6">Restricted access. Authorized personnel only.</p>
+  </div>
+
 </body>
 </html>

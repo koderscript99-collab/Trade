@@ -1,29 +1,107 @@
-
 {% extends "core/admin/admin_base.html" %}
 {% block title %}Review Deposit{% endblock %}
+{% block page_title %}Review Deposit{% endblock %}
 {% block content %}
-<h1>Deposit #{{ deposit.id }}</h1>
-<ul>
-    <li>User: {{ deposit.user.username }}</li>
-    <li>Wallet: {{ deposit.wallet.coin }}</li>
-    <li>Amount: {{ deposit.amount }}</li>
-    <li>Transaction ID: {{ deposit.txid }}</li>
-    <li>Status: {{ deposit.status }}</li>
-    <li>Submitted: {{ deposit.created_at }}</li>
-</ul>
-{% if deposit.proof %}
-<p><img src="{{ deposit.proof.url }}" alt="Proof" width="300"></p>
-{% endif %}
 
-{% if deposit.status == "pending" %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Decision</button>
-</form>
-{% else %}
-<p>This deposit has already been {{ deposit.status }}.</p>
-{% endif %}
+<div class="max-w-3xl mx-auto flex flex-col gap-6">
 
-<a href="{% url 'core:admin_deposits_list' %}">Back to Deposits</a>
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-on-surface tracking-tight">Deposit #{{ deposit.id }}</h1>
+      <p class="text-sm text-on-surface-variant mt-1">Submitted {{ deposit.created_at }}</p>
+    </div>
+    {% if deposit.status == "pending" %}
+    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-tertiary/10 text-tertiary border border-tertiary/30">
+      <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Pending
+    </span>
+    {% elif deposit.status == "approved" %}
+    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/30">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>Approved
+    </span>
+    {% else %}
+    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-error/10 text-error border border-error/30">
+      <span class="w-1.5 h-1.5 rounded-full bg-error"></span>Rejected
+    </span>
+    {% endif %}
+  </div>
+
+  <!-- Details card -->
+  <div class="glass-panel rounded-xl p-6">
+    <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold mb-4">Details</h3>
+    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+      <div>
+        <dt class="text-on-surface-variant text-xs mb-1">User</dt>
+        <dd class="font-medium text-on-surface flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base text-primary">person</span>{{ deposit.user.username }}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-on-surface-variant text-xs mb-1">Wallet</dt>
+        <dd class="font-medium text-on-surface">{{ deposit.wallet.coin }}</dd>
+      </div>
+      <div>
+        <dt class="text-on-surface-variant text-xs mb-1">Amount</dt>
+        <dd class="font-data-md text-primary text-base font-bold">{{ deposit.amount }}</dd>
+      </div>
+      <div>
+        <dt class="text-on-surface-variant text-xs mb-1">Transaction ID</dt>
+        <dd class="font-data-md text-on-surface text-xs break-all">{{ deposit.txid }}</dd>
+      </div>
+      <div>
+        <dt class="text-on-surface-variant text-xs mb-1">Status</dt>
+        <dd class="font-medium text-on-surface capitalize">{{ deposit.status }}</dd>
+      </div>
+      <div>
+        <dt class="text-on-surface-variant text-xs mb-1">Submitted</dt>
+        <dd class="font-medium text-on-surface">{{ deposit.created_at }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Proof of payment -->
+  {% if deposit.proof %}
+  <div class="glass-panel rounded-xl p-6">
+    <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold mb-4">Proof of Payment</h3>
+    <a href="{{ deposit.proof.url }}" target="_blank" rel="noopener" class="block group">
+      <img src="{{ deposit.proof.url }}" alt="Proof of payment"
+           class="rounded-lg border border-white/10 max-w-full sm:max-w-sm group-hover:opacity-90 transition-opacity">
+    </a>
+    <p class="text-xs text-on-surface-variant mt-2 flex items-center gap-1">
+      <span class="material-symbols-outlined text-sm">open_in_new</span>Click to view full size
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- Decision form -->
+  {% if deposit.status == "pending" %}
+  <div class="glass-panel rounded-xl p-6">
+    <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold mb-4">Decision</h3>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div class="[&_select]:bg-surface-container-high [&_select]:border-outline-variant [&_select]:text-on-surface [&_select]:rounded-md [&_select]:text-sm
+                  [&_input]:bg-surface-container-high [&_input]:border-outline-variant [&_input]:text-on-surface [&_input]:rounded-md [&_input]:text-sm
+                  [&_textarea]:bg-surface-container-high [&_textarea]:border-outline-variant [&_textarea]:text-on-surface [&_textarea]:rounded-md [&_textarea]:text-sm
+                  [&_label]:text-xs [&_label]:font-bold [&_label]:text-on-surface-variant [&_label]:uppercase [&_label]:tracking-wide [&_label]:mb-1 [&_label]:block
+                  [&_p]:mb-4">
+        {{ form.as_p }}
+      </div>
+      <button type="submit"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-bold text-sm px-5 py-2.5 rounded-md hover:brightness-110 transition-all">
+        <span class="material-symbols-outlined text-lg">check_circle</span>Submit Decision
+      </button>
+    </form>
+  </div>
+  {% else %}
+  <div class="glass-panel rounded-xl p-6 flex items-center gap-3">
+    <span class="material-symbols-outlined text-on-surface-variant">info</span>
+    <p class="text-sm text-on-surface-variant">This deposit has already been <span class="font-bold text-on-surface capitalize">{{ deposit.status }}</span>.</p>
+  </div>
+  {% endif %}
+
+  <a href="{% url 'core:admin_deposits_list' %}"
+     class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors font-medium w-fit">
+    <span class="material-symbols-outlined text-lg">arrow_back</span>Back to Deposits
+  </a>
+
+</div>
 {% endblock %}
