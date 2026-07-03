@@ -1,46 +1,367 @@
-
-
 {% extends "core/admin/admin_base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block extra_head %}
+<style>
+  .bar-transition { transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .ticker-flash-green { animation: flash-green 1s ease-out; }
+  @keyframes flash-green {
+    0% { background-color: rgba(16, 185, 129, 0.2); }
+    100% { background-color: transparent; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Admin Dashboard</h1>
-<ul>
-    <li>Total Users: {{ stats.total_users }}</li>
-    <li>Total Approved Deposits: {{ stats.total_deposits }}</li>
-    <li>Pending Deposits: {{ stats.pending_deposits }}</li>
-    <li>Pending Withdrawals: {{ stats.pending_withdrawals }}</li>
-    <li>Pending KYC: {{ stats.pending_kyc }}</li>
-    <li>Active Investments: {{ stats.active_investments }}</li>
-    <li>Total Invested (running): {{ stats.total_invested }}</li>
-</ul>
 
-<h2>Recent Deposits</h2>
-<ul>
-    {% for d in recent_deposits %}
-    <li>{{ d.user.username }} - {{ d.amount }} - {{ d.status }}
-        <a href="{% url 'core:admin_deposit_detail' d.pk %}">View</a></li>
-    {% empty %}
-    <li>None yet.</li>
-    {% endfor %}
-</ul>
+<!-- Metric Overview (Bento + Bar Charts) -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
-<h2>Recent Withdrawals</h2>
-<ul>
-    {% for w in recent_withdrawals %}
-    <li>{{ w.user.username }} - {{ w.amount }} - {{ w.status }}
-        <a href="{% url 'core:admin_withdrawal_detail' w.pk %}">View</a></li>
-    {% empty %}
-    <li>None yet.</li>
-    {% endfor %}
-</ul>
+  <!-- Total Users -->
+  <div class="glass-panel p-4 rounded-xl hover:border-primary/30 transition-all group">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Total Users</span>
+      <span class="material-symbols-outlined text-primary text-lg">group</span>
+    </div>
+    <span class="font-mono text-lg text-on-surface">{{ stats.total_users }}</span>
+    <div class="h-10 mt-4 overflow-hidden flex items-end gap-[3px]">
+      <div class="bg-primary/20 w-full h-[35%] rounded-t-sm bar-transition group-hover:h-[45%]"></div>
+      <div class="bg-primary/30 w-full h-[50%] rounded-t-sm bar-transition group-hover:h-[60%]"></div>
+      <div class="bg-primary/40 w-full h-[45%] rounded-t-sm bar-transition group-hover:h-[55%]"></div>
+      <div class="bg-primary/60 w-full h-[70%] rounded-t-sm bar-transition group-hover:h-[80%]"></div>
+      <div class="bg-primary/80 w-full h-[60%] rounded-t-sm bar-transition group-hover:h-[70%]"></div>
+      <div class="bg-primary w-full h-[85%] rounded-t-sm bar-transition group-hover:h-[95%]"></div>
+    </div>
+  </div>
 
-<h2>Recent Users</h2>
-<ul>
-    {% for u in recent_users %}
-    <li>{{ u.username }} - {{ u.email }} - {{ u.created_at }}
-        <a href="{% url 'core:admin_user_detail' u.pk %}">View</a></li>
-    {% empty %}
-    <li>None yet.</li>
-    {% endfor %}
-</ul>
+  <!-- Approved Deposits -->
+  <div class="glass-panel p-4 rounded-xl hover:border-primary/30 transition-all group">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Approved Deposits</span>
+      <span class="material-symbols-outlined text-primary text-lg">bar_chart</span>
+    </div>
+    <span class="font-mono text-lg text-primary">${{ stats.total_deposits|floatformat:2 }}</span>
+    <div class="h-10 mt-4 overflow-hidden flex items-end gap-[3px]">
+      <div class="bg-primary/20 w-full h-[40%] rounded-t-sm bar-transition group-hover:h-[50%]"></div>
+      <div class="bg-primary/40 w-full h-[55%] rounded-t-sm bar-transition group-hover:h-[65%]"></div>
+      <div class="bg-primary/60 w-full h-[70%] rounded-t-sm bar-transition group-hover:h-[80%]"></div>
+      <div class="bg-primary/80 w-full h-[60%] rounded-t-sm bar-transition group-hover:h-[70%]"></div>
+      <div class="bg-primary w-full h-[90%] rounded-t-sm bar-transition group-hover:h-[100%]"></div>
+      <div class="bg-primary w-full h-[80%] rounded-t-sm bar-transition group-hover:h-[90%]"></div>
+    </div>
+  </div>
+
+  <!-- Pending Deposits -->
+  <div class="glass-panel p-4 rounded-xl border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40 transition-all">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Pending Deposits</span>
+      <span class="material-symbols-outlined text-amber-500 text-lg">hourglass_top</span>
+    </div>
+    <span class="font-mono text-lg text-amber-500">{{ stats.pending_deposits }}</span>
+    <div class="mt-4 bg-white/5 rounded p-2 text-[10px] border border-white/5">
+      <p class="text-on-surface-variant">Awaiting review</p>
+    </div>
+  </div>
+
+  <!-- Pending Withdrawals -->
+  <div class="glass-panel p-4 rounded-xl border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40 transition-all">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Pending Withdrawals</span>
+      <span class="material-symbols-outlined text-amber-500 text-lg">account_balance_wallet</span>
+    </div>
+    <span class="font-mono text-lg text-amber-500">{{ stats.pending_withdrawals }}</span>
+    <div class="mt-4 bg-white/5 rounded p-2 text-[10px] border border-white/5">
+      <p class="text-on-surface-variant">Awaiting review</p>
+    </div>
+  </div>
+
+  <!-- Pending KYC -->
+  <div class="glass-panel p-4 rounded-xl border-error/20 bg-error/5 hover:border-error/40 transition-all">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Pending KYC</span>
+      <span class="material-symbols-outlined text-error text-lg animate-pulse">report_problem</span>
+    </div>
+    <span class="font-mono text-lg text-error">{{ stats.pending_kyc }}</span>
+    <div class="mt-4 bg-white/5 rounded p-2 text-[10px] border border-white/5">
+      <p class="text-on-surface-variant">Action required</p>
+    </div>
+  </div>
+
+  <!-- Active Investments -->
+  <div class="glass-panel p-4 rounded-xl hover:border-primary/30 transition-all group">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Active Investments</span>
+      <span class="material-symbols-outlined text-on-surface-variant text-lg">assignment</span>
+    </div>
+    <span class="font-mono text-lg text-on-surface">{{ stats.active_investments }}</span>
+    <div class="h-10 mt-4 overflow-hidden flex items-end gap-[3px]">
+      <div class="bg-surface-container-highest w-full h-[25%] rounded-t-sm bar-transition group-hover:h-[35%]"></div>
+      <div class="bg-surface-container-highest w-full h-[45%] rounded-t-sm bar-transition group-hover:h-[55%]"></div>
+      <div class="bg-primary/30 w-full h-[40%] rounded-t-sm bar-transition group-hover:h-[50%]"></div>
+      <div class="bg-primary/50 w-full h-[65%] rounded-t-sm bar-transition group-hover:h-[75%]"></div>
+      <div class="bg-primary/70 w-full h-[55%] rounded-t-sm bar-transition group-hover:h-[65%]"></div>
+      <div class="bg-primary w-full h-[80%] rounded-t-sm bar-transition group-hover:h-[90%]"></div>
+    </div>
+  </div>
+
+  <!-- Total Invested -->
+  <div class="glass-panel p-4 rounded-xl hover:border-primary/30 transition-all group">
+    <div class="flex justify-between items-start mb-2">
+      <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Total Invested</span>
+      <span class="material-symbols-outlined text-primary text-lg">monitoring</span>
+    </div>
+    <span class="font-mono text-lg text-primary">${{ stats.total_invested|floatformat:2 }}</span>
+    <div class="h-10 mt-4 overflow-hidden flex items-end gap-[3px]">
+      <div class="bg-primary/30 w-full h-[35%] rounded-t-sm bar-transition group-hover:h-[45%]"></div>
+      <div class="bg-primary/45 w-full h-[50%] rounded-t-sm bar-transition group-hover:h-[60%]"></div>
+      <div class="bg-primary/60 w-full h-[65%] rounded-t-sm bar-transition group-hover:h-[75%]"></div>
+      <div class="bg-primary/80 w-full h-[55%] rounded-t-sm bar-transition group-hover:h-[65%]"></div>
+      <div class="bg-primary w-full h-[85%] rounded-t-sm bar-transition group-hover:h-[95%]"></div>
+      <div class="bg-primary w-full h-[75%] rounded-t-sm bar-transition group-hover:h-[85%]"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Tables + Pulse Row -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+
+  <!-- Left: Recent Deposits / Withdrawals / Users -->
+  <div class="xl:col-span-8 space-y-4">
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <!-- Recent Deposits -->
+      <div class="glass-panel rounded-xl flex flex-col">
+        <div class="p-4 border-b border-white/5 flex justify-between items-center">
+          <h3 class="text-lg font-bold">Recent Deposits</h3>
+          <a href="{% url 'core:admin_deposits_list' %}" class="px-3 py-1 bg-primary text-on-primary rounded text-[10px] font-bold hover:opacity-90 transition-all">View All</a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="text-[10px] uppercase text-on-surface-variant/60 border-b border-white/5">
+                <th class="px-6 py-3">User</th>
+                <th class="px-6 py-3">Amount</th>
+                <th class="px-6 py-3">Status</th>
+                <th class="px-6 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm font-mono">
+              {% for d in recent_deposits %}
+              <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                <td class="px-6 py-3">{{ d.user.username }}</td>
+                <td class="px-6 py-3">${{ d.amount|floatformat:2 }}</td>
+                <td class="px-6 py-3">
+                  <span class="flex items-center gap-1.5 text-xs
+                    {% if d.status == 'approved' %}text-primary
+                    {% elif d.status == 'pending' %}text-amber-500
+                    {% else %}text-error{% endif %}">
+                    <span class="w-1.5 h-1.5 rounded-full
+                      {% if d.status == 'approved' %}bg-primary
+                      {% elif d.status == 'pending' %}bg-amber-500 animate-pulse
+                      {% else %}bg-error{% endif %}"></span>
+                    {{ d.get_status_display|default:d.status|capfirst }}
+                  </span>
+                </td>
+                <td class="px-6 py-3 text-right">
+                  <a href="{% url 'core:admin_deposit_detail' d.pk %}" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all text-base opacity-0 group-hover:opacity-100">open_in_new</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td class="px-6 py-4 text-on-surface-variant text-sm" colspan="4">None yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Withdrawals -->
+      <div class="glass-panel rounded-xl flex flex-col">
+        <div class="p-4 border-b border-white/5 flex justify-between items-center">
+          <h3 class="text-lg font-bold">Recent Withdrawals</h3>
+          <a href="{% url 'core:admin_withdrawals_list' %}" class="px-3 py-1 bg-primary text-on-primary rounded text-[10px] font-bold hover:opacity-90 transition-all">View All</a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="text-[10px] uppercase text-on-surface-variant/60 border-b border-white/5">
+                <th class="px-6 py-3">User</th>
+                <th class="px-6 py-3">Amount</th>
+                <th class="px-6 py-3">Status</th>
+                <th class="px-6 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm font-mono">
+              {% for w in recent_withdrawals %}
+              <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                <td class="px-6 py-3">{{ w.user.username }}</td>
+                <td class="px-6 py-3">${{ w.amount|floatformat:2 }}</td>
+                <td class="px-6 py-3">
+                  <span class="flex items-center gap-1.5 text-xs
+                    {% if w.status == 'approved' %}text-primary
+                    {% elif w.status == 'pending' %}text-amber-500
+                    {% else %}text-error{% endif %}">
+                    <span class="w-1.5 h-1.5 rounded-full
+                      {% if w.status == 'approved' %}bg-primary
+                      {% elif w.status == 'pending' %}bg-amber-500 animate-pulse
+                      {% else %}bg-error{% endif %}"></span>
+                    {{ w.get_status_display|default:w.status|capfirst }}
+                  </span>
+                </td>
+                <td class="px-6 py-3 text-right">
+                  <a href="{% url 'core:admin_withdrawal_detail' w.pk %}" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all text-base opacity-0 group-hover:opacity-100">open_in_new</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td class="px-6 py-4 text-on-surface-variant text-sm" colspan="4">None yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="glass-panel rounded-xl flex flex-col">
+      <div class="p-4 border-b border-white/5 flex justify-between items-center">
+        <h3 class="text-lg font-bold">Recent Users</h3>
+        <a href="{% url 'core:admin_users_list' %}" class="px-3 py-1 bg-primary text-on-primary rounded text-[10px] font-bold hover:opacity-90 transition-all">View All</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="text-[10px] uppercase text-on-surface-variant/60 border-b border-white/5">
+              <th class="px-6 py-3">Username</th>
+              <th class="px-6 py-3">Email</th>
+              <th class="px-6 py-3">Joined</th>
+              <th class="px-6 py-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm font-mono">
+            {% for u in recent_users %}
+            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+              <td class="px-6 py-3">{{ u.username }}</td>
+              <td class="px-6 py-3 text-on-surface-variant">{{ u.email }}</td>
+              <td class="px-6 py-3 text-on-surface-variant">{{ u.created_at|date:"M j, Y" }}</td>
+              <td class="px-6 py-3 text-right">
+                <a href="{% url 'core:admin_user_detail' u.pk %}" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all text-base opacity-0 group-hover:opacity-100">open_in_new</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td class="px-6 py-4 text-on-surface-variant text-sm" colspan="4">None yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right: Market Pulse + Notifications -->
+  <div class="xl:col-span-4 space-y-4">
+
+    <!-- Live Market Pulse -->
+    <div class="glass-panel rounded-xl overflow-hidden">
+      <div class="p-4 border-b border-white/5 flex items-center justify-between">
+        <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Live Market Pulse</h3>
+        <span class="text-[10px] text-primary px-1.5 py-0.5 rounded border border-primary/20 bg-primary/5">Live</span>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="flex items-center justify-between group cursor-pointer" onclick="this.classList.add('ticker-flash-green'); setTimeout(()=>this.classList.remove('ticker-flash-green'), 1000)">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">₿</div>
+            <div>
+              <p class="text-xs font-bold">BTC/USD</p>
+              <p class="text-[10px] text-on-surface-variant">Bitcoin</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-mono text-primary" id="btc-price">$68,241.50</p>
+            <p class="text-[10px] text-primary font-bold">+2.45%</p>
+          </div>
+        </div>
+        <div class="h-px bg-white/5"></div>
+        <div class="flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">Ξ</div>
+            <div>
+              <p class="text-xs font-bold">ETH/USD</p>
+              <p class="text-[10px] text-on-surface-variant">Ethereum</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-mono text-secondary" id="eth-price">$3,412.12</p>
+            <p class="text-[10px] text-secondary font-bold">-0.82%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Action Logs -->
+    <div class="glass-panel rounded-xl flex flex-col flex-1">
+      <div class="p-4 border-b border-white/5 flex items-center justify-between">
+        <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Admin Action Logs</h3>
+        <a href="{% url 'core:admin_site_settings' %}" class="material-symbols-outlined text-on-surface-variant text-sm hover:text-primary transition-all">settings</a>
+      </div>
+      <div class="p-4 space-y-4 max-h-[250px] overflow-y-auto custom-scrollbar">
+        {% for log in recent_admin_logs %}
+        <div class="flex gap-3">
+          <div class="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0"></div>
+          <div>
+            <p class="text-xs text-on-surface">{{ log.message }}</p>
+            <p class="text-[10px] text-on-surface-variant mt-1">{{ log.created_at|timesince }} ago{% if log.actor %} • {{ log.actor }}{% endif %}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-xs text-on-surface-variant">No recent admin activity.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Bottom Status Footer -->
+<div class="etched-border bg-surface-container-lowest/50 rounded-lg p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+  <div class="flex gap-6 items-center">
+    <div class="flex flex-col">
+      <span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Server Latency</span>
+      <span class="text-xs font-mono text-primary">14ms - Optimized</span>
+    </div>
+    <div class="h-8 w-px bg-white/5"></div>
+    <div class="flex flex-col">
+      <span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">API Status</span>
+      <span class="text-xs font-mono text-primary">Operational (100%)</span>
+    </div>
+  </div>
+  <div class="flex gap-3">
+    <a href="{% url 'core:admin_site_settings' %}" class="px-4 py-2 border border-white/10 rounded-md text-xs font-bold hover:bg-white/5 transition-all">Support Desk</a>
+    <button class="px-4 py-2 bg-primary text-on-primary rounded-md text-xs font-bold hover:shadow-[0_0_20px_rgba(78,222,163,0.3)] transition-all">Maintenance Mode</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Simulated live ticker — cosmetic only, not tied to backend data
+  setInterval(() => {
+    const btc = document.getElementById('btc-price');
+    if (btc) {
+      const current = parseFloat(btc.innerText.replace('$', '').replace(',', ''));
+      const change = (Math.random() - 0.45) * 10;
+      const newVal = (current + change).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      btc.innerText = '$' + newVal;
+    }
+    const eth = document.getElementById('eth-price');
+    if (eth) {
+      const current = parseFloat(eth.innerText.replace('$', '').replace(',', ''));
+      const change = (Math.random() - 0.5) * 5;
+      const newVal = (current + change).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      eth.innerText = '$' + newVal;
+    }
+  }, 3000);
+</script>
 {% endblock %}
