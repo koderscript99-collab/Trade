@@ -1,24 +1,157 @@
-
 {% extends "core/base.html" %}
-{% block title %}Register{% endblock %}
+{% load static %}
+{% block title %}Register | {{ site_settings.site_name|default:"NEON_TRADE" }}{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b1326; --bg-dim: #060e20;
+  --surface-card: #171f33; --surface-bright: #31394d;
+  --on-surface: #dae2fd; --on-surface-sub: #bbcabf;
+  --primary: #4edea3; --on-primary: #003824;
+  --primary-10: rgba(78,222,163,0.10); --primary-20: rgba(78,222,163,0.20); --primary-40: rgba(78,222,163,0.40);
+  --error: #ffb4ab;
+  --border: rgba(255,255,255,0.08); --border-hover: rgba(255,255,255,0.20);
+  --glass-bg: rgba(30,41,59,0.80);
+  --glow-strong: 0 0 24px rgba(78,222,163,0.35);
+  --glow-soft: 0 0 60px rgba(78,222,163,0.10);
+  --transition: 0.35s ease;
+}
+html.light {
+  --bg: #eef4ef; --bg-dim: #dce8dd;
+  --surface-card: #d4e1d5; --surface-bright: #aec0af;
+  --on-surface: #0d1f14; --on-surface-sub: #3a5040;
+  --primary: #007a52; --on-primary: #ffffff;
+  --primary-10: rgba(0,122,82,0.10); --primary-20: rgba(0,122,82,0.22); --primary-40: rgba(0,122,82,0.40);
+  --error: #b3261e;
+  --border: rgba(0,0,0,0.09); --border-hover: rgba(0,0,0,0.20);
+  --glass-bg: rgba(210,230,215,0.85);
+  --glow-strong: 0 0 24px rgba(0,122,82,0.28);
+  --glow-soft: 0 0 60px rgba(0,122,82,0.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--on-surface);font-family:'Inter',sans-serif;transition:background var(--transition),color var(--transition);}
+
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:64px;
+  background:color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-icon{color:var(--primary);font-size:26px;}
+.logo-text{font-size:17px;font-weight:700;letter-spacing:-0.03em;color:var(--primary);}
+.theme-btn{
+  width:36px;height:36px;border-radius:50%;border:1px solid var(--border);
+  background:var(--surface-card);color:var(--on-surface-sub);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.theme-btn:hover{border-color:var(--primary);color:var(--primary);}
+.theme-btn .material-symbols-outlined{font-size:18px;}
+
+.auth-wrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:120px 24px 60px;position:relative;overflow:hidden;
+}
+.auth-glow{
+  position:absolute;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, var(--primary-20), transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  animation:pulsate 3.5s ease-in-out infinite;z-index:0;pointer-events:none;
+}
+@keyframes pulsate{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06);}}
+
+.auth-card{
+  position:relative;z-index:1;width:100%;max-width:420px;
+  background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--border);border-radius:16px;padding:40px 36px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.35);
+  animation:fadeUp .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+.auth-head{text-align:center;margin-bottom:30px;}
+.auth-head .material-symbols-outlined{color:var(--primary);font-size:40px;margin-bottom:8px;}
+.auth-head h1{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;}
+.auth-head p{font-size:13px;color:var(--on-surface-sub);}
+
+.styled-form p{margin-bottom:16px;}
+.styled-form label{
+  display:block;font-size:12px;font-weight:600;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--on-surface-sub);margin-bottom:6px;
+}
+.styled-form input, .styled-form select, .styled-form textarea{
+  width:100%;padding:12px 14px;border-radius:8px;
+  background:var(--surface-bright);border:1px solid var(--border);
+  color:var(--on-surface);font-family:'Inter',sans-serif;font-size:14px;
+  transition:border-color .2s, box-shadow .2s;
+}
+.styled-form input:focus, .styled-form select:focus, .styled-form textarea:focus{
+  outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-10);
+}
+.styled-form ul.errorlist{
+  list-style:none;color:var(--error);font-size:12px;margin-top:4px;
+}
+
+.btn-primary{
+  background:var(--primary);color:var(--on-primary);border:none;cursor:pointer;
+  font-size:15px;font-weight:700;padding:13px 22px;border-radius:9px;
+  box-shadow:var(--glow-strong);transition:filter .2s, transform .15s;
+  display:block;width:100%;text-align:center;
+}
+.btn-primary:hover{filter:brightness(1.1);}
+.btn-primary:active{transform:scale(.97);}
+
+.auth-foot{text-align:center;font-size:13px;color:var(--on-surface-sub);margin-top:24px;}
+.auth-foot a{color:var(--primary);font-weight:700;}
+.auth-foot a:hover{opacity:.8;}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto px-container-padding py-24">
-    <div class="glass-panel p-8 rounded-xl">
-        <div class="text-center mb-8">
-            <span class="material-symbols-outlined text-primary text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
-            <h1 class="font-display-lg text-headline-md">Create an Account</h1>
-            <p class="text-on-surface-variant text-sm mt-1">Start investing in minutes.</p>
-        </div>
+<header class="topbar">
+  <a class="logo" href="{% url 'core:landing' %}">
+    <span class="material-symbols-outlined logo-icon" style="font-variation-settings:'FILL' 1">currency_exchange</span>
+    <span class="logo-text">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
+  </a>
+  <button class="theme-btn" id="themeToggle" aria-label="Toggle dark/light mode">
+    <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
+  </button>
+</header>
 
-        <form method="post" class="styled-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn-primary w-full mt-2">Register</button>
-        </form>
-
-        <p class="text-center text-on-surface-variant text-sm mt-6">
-            Already have an account? <a href="{% url 'core:login' %}" class="text-primary font-bold hover:brightness-110">Login</a>
-        </p>
-    </div>
+<div class="auth-head">
+  <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">currency_exchange</span>
+  <h1>Create an Account</h1>
+  <p>Start investing in minutes.</p>
 </div>
+
+<form method="post" class="styled-form">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn-primary">Register</button>
+</form>
+
+<p class="auth-foot">
+  Already have an account? <a href="{% url 'core:login' %}">Login</a>
+</p>
+    
+
+{% block extra_scripts %}
+<script>
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+function applyTheme(t){
+  root.classList.toggle('light', t === 'light');
+  themeIcon.textContent = t === 'light' ? 'dark_mode' : 'light_mode';
+  localStorage.setItem('neon_theme', t);
+}
+applyTheme(localStorage.getItem('neon_theme') || 'dark');
+themeBtn.addEventListener('click', () => {
+  applyTheme(root.classList.contains('light') ? 'dark' : 'light');
+});
+</script>
 {% endblock %}
