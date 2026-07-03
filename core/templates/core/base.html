@@ -1,45 +1,274 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Crypto Platform{% endblock %}</title>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>{% block title %}{{ site_settings.site_name|default:"NEON_TRADE" }}{% endblock %}</title>
+
+<!-- Set the theme class before first paint, to avoid a light/dark flash -->
+<script>
+    (function () {
+        var stored = localStorage.getItem("theme");
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var isDark = stored ? stored === "dark" : prefersDark;
+        if (isDark) {
+            document.documentElement.classList.add("dark");
+        }
+    })();
+</script>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<!-- Theme tokens: values differ between :root (light) and .dark (dark) -->
+<style>
+    :root {
+        --color-background: 247 249 252;
+        --color-surface: 255 255 255;
+        --color-surface-container-low: 240 243 248;
+        --color-surface-container-lowest: 255 255 255;
+        --color-surface-bright: 255 255 255;
+        --color-on-surface: 15 23 34;
+        --color-on-surface-variant: 71 85 99;
+        --color-edge: 15 23 34;
+        --color-panel-bg: 255, 255, 255;
+        --color-panel-bg-alpha: 0.7;
+        --color-panel-border-alpha: 0.08;
+    }
+    .dark {
+        --color-background: 11 19 38;
+        --color-surface: 11 19 38;
+        --color-surface-container-low: 19 27 46;
+        --color-surface-container-lowest: 6 14 32;
+        --color-surface-bright: 49 57 77;
+        --color-on-surface: 218 226 253;
+        --color-on-surface-variant: 187 202 191;
+        --color-edge: 255 255 255;
+        --color-panel-bg: 30, 41, 59;
+        --color-panel-bg-alpha: 0.8;
+        --color-panel-border-alpha: 0.08;
+    }
+</style>
+
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "background": "rgb(var(--color-background) / <alpha-value>)",
+                    "surface": "rgb(var(--color-surface) / <alpha-value>)",
+                    "surface-container-low": "rgb(var(--color-surface-container-low) / <alpha-value>)",
+                    "surface-container-lowest": "rgb(var(--color-surface-container-lowest) / <alpha-value>)",
+                    "surface-bright": "rgb(var(--color-surface-bright) / <alpha-value>)",
+                    "on-surface": "rgb(var(--color-on-surface) / <alpha-value>)",
+                    "on-surface-variant": "rgb(var(--color-on-surface-variant) / <alpha-value>)",
+                    "edge": "rgb(var(--color-edge) / <alpha-value>)",
+                    "primary": "#4edea3",
+                    "on-primary": "#003824",
+                    "on-primary-fixed": "#002113",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#59a7cf"
+                },
+                borderRadius: {
+                    DEFAULT: "0.125rem",
+                    lg: "0.25rem",
+                    xl: "0.5rem",
+                    full: "0.75rem"
+                },
+                spacing: {
+                    "stack-sm": "8px",
+                    "max-width-desktop": "1440px",
+                    "stack-lg": "32px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "container-padding": "24px",
+                    "stack-md": "16px"
+                },
+                fontFamily: {
+                    "data-lg": ["JetBrains Mono"],
+                    "data-md": ["JetBrains Mono"],
+                    "body-lg": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Inter"]
+                },
+                fontSize: {
+                    "data-lg": ["18px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "data-md": ["14px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}]
+                }
+            }
+        }
+    };
+</script>
+
+<style>
+    body {
+        background-color: rgb(var(--color-background));
+        color: rgb(var(--color-on-surface));
+        overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .glass-panel {
+        background: rgba(var(--color-panel-bg), var(--color-panel-bg-alpha));
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(var(--color-edge), var(--color-panel-border-alpha));
+        transition: border 0.3s ease, transform 0.3s ease, background 0.3s ease;
+    }
+    .glass-panel:hover {
+        border: 1px solid rgba(var(--color-edge), 0.2);
+    }
+    .edge-b-10 { border-color: rgba(var(--color-edge), 0.1); }
+    .edge-b-5 { border-color: rgba(var(--color-edge), 0.05); }
+    .edge-bg-5 { background-color: rgba(var(--color-edge), 0.05); }
+    .edge-bg-5:hover { background-color: rgba(var(--color-edge), 0.08); }
+    .ticker-flash-green { animation: flash-green 1.5s ease-out infinite; }
+    @keyframes flash-green {
+        0% { background: transparent; }
+        10% { background: rgba(78, 222, 163, 0.1); }
+        100% { background: transparent; }
+    }
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .scroll-reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+{% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="font-body-md text-body-md selection:bg-primary/30">
 
-<nav>
-    <a href="{% url 'core:landing' %}">Home</a> |
-    <a href="{% url 'core:investment_plans' %}">Plans</a> |
-    <a href="{% url 'core:news_list' %}">News</a> |
-    {% if user.is_authenticated %}
-        <a href="{% url 'core:dashboard' %}">Dashboard</a> |
-        <a href="{% url 'core:deposit_list' %}">Deposits</a> |
-        <a href="{% url 'core:withdrawal_list' %}">Withdrawals</a> |
-        <a href="{% url 'core:investment_list' %}">My Investments</a> |
-        <a href="{% url 'core:referral' %}">Referrals</a> |
-        <a href="{% url 'core:notifications' %}">Notifications</a> |
-        <a href="{% url 'core:kyc_status' %}">KYC</a> |
-        <a href="{% url 'core:transactions' %}">Transactions</a> |
-        <a href="{% url 'core:profile' %}">Profile</a> |
-        <a href="{% url 'core:logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'core:login' %}">Login</a> |
-        <a href="{% url 'core:register' %}">Register</a>
-    {% endif %}
-</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b edge-b-10 shadow-sm flex items-center justify-between px-container-padding h-16">
+    <a href="{% url 'core:landing' %}" class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
+        <span class="font-display-lg text-headline-md tracking-tighter text-primary">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
+    </a>
 
-<hr>
+    <nav class="hidden md:flex items-center gap-8">
+        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:investment_plans' %}">Markets</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:news_list' %}">News</a>
+        {% if user.is_authenticated %}
+        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:transactions' %}">Transactions</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:referral' %}">Referrals</a>
+        {% endif %}
+    </nav>
+
+    <div class="flex items-center gap-3">
+        <button id="theme-toggle" type="button" aria-label="Toggle light and dark mode"
+                class="w-10 h-10 flex items-center justify-center rounded-lg edge-bg-5 transition-all">
+            <span class="material-symbols-outlined text-on-surface" id="theme-toggle-icon">dark_mode</span>
+        </button>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'core:notifications' %}" class="hidden md:block text-on-surface edge-bg-5 px-4 py-2 rounded-lg transition-all">
+                {{ user.username }}
+            </a>
+            <a href="{% url 'core:dashboard' %}" class="bg-primary text-on-primary font-bold px-6 py-2 rounded-lg active:scale-95 transition-transform">
+                Dashboard
+            </a>
+            <a href="{% url 'core:logout' %}" class="hidden md:block text-on-surface-variant hover:text-primary px-2 py-2 rounded-lg transition-all">
+                Logout
+            </a>
+        {% else %}
+            <a href="{% url 'core:login' %}" class="hidden md:block text-on-surface edge-bg-5 px-4 py-2 rounded-lg transition-all">
+                Login
+            </a>
+            <a href="{% url 'core:register' %}" class="bg-primary text-on-primary font-bold px-6 py-2 rounded-lg active:scale-95 transition-transform">
+                Get Started
+            </a>
+        {% endif %}
+    </div>
+</header>
 
 {% if messages %}
-<ul>
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-container-padding space-y-2">
     {% for message in messages %}
-    <li>{{ message }}</li>
+    <div class="glass-panel px-4 py-3 rounded-lg text-sm text-on-surface">{{ message }}</div>
     {% endfor %}
-</ul>
-<hr>
+</div>
 {% endif %}
 
+<main class="pt-16">
 {% block content %}{% endblock %}
+</main>
 
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t edge-b-5 w-full">
+    <div class="flex flex-col md:flex-row justify-between items-center py-stack-lg px-container-padding max-w-max-desktop mx-auto">
+        <div class="flex flex-col gap-4 mb-8 md:mb-0">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">currency_exchange</span>
+                <span class="font-headline-sm text-headline-sm text-on-surface">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
+            </div>
+            <p class="text-on-surface-variant max-w-xs text-sm">
+                {{ site_settings.site_name|default:"Our platform" }} — digital asset investing, built on trust and transparency.
+            </p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-x-12 gap-y-4 mb-8 md:mb-0">
+            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:investment_plans' %}">Markets</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:news_list' %}">News</a>
+            {% if user.is_authenticated %}
+            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:kyc_status' %}">KYC</a>
+            {% else %}
+            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:login' %}">Login</a>
+            {% endif %}
+        </div>
+        <div class="flex gap-4">
+            {% if site_settings.support_email %}
+            <a class="w-10 h-10 glass-panel rounded-full flex items-center justify-center hover:text-primary transition-all" href="mailto:{{ site_settings.support_email }}">
+                <span class="material-symbols-outlined text-sm">mail</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="text-center py-6 border-t edge-b-5">
+        <p class="text-on-surface-variant/60 text-xs">&copy; {% now "Y" %} {{ site_settings.site_name|default:"NEON_TRADE" }}. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    // Scroll-reveal animation
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("active");
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".scroll-reveal").forEach(function (el) { observer.observe(el); });
+
+    // Theme toggle
+    (function () {
+        var root = document.documentElement;
+        var icon = document.getElementById("theme-toggle-icon");
+        var btn = document.getElementById("theme-toggle");
+
+        function updateIcon() {
+            icon.textContent = root.classList.contains("dark") ? "light_mode" : "dark_mode";
+        }
+        updateIcon();
+
+        btn.addEventListener("click", function () {
+            var isDark = root.classList.toggle("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            updateIcon();
+        });
+    })();
+</script>
+{% block extra_scripts %}{% endblock %}
 </body>
 </html>
