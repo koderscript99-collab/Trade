@@ -41,6 +41,7 @@ urlpatterns = [
 
     # Notifications
     path("notifications/", views.notifications_view, name="notifications"),
+    path("notifications/<int:pk>/read/", views.notification_mark_read_view, name="notification_mark_read"),
 
     # KYC
     path("kyc/", views.kyc_submit_view, name="kyc_submit"),

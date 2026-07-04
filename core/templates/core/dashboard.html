@@ -5,22 +5,22 @@
 {% block content %}
 
 {% if latest_unread_notification %}
-<div id="announcement-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
-    <div class="glass-panel max-w-sm w-full rounded-2xl p-6 relative reveal-fade-in">
+<div id="announcement-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+    <div class="glass-panel rounded-[32px] p-8 max-w-sm w-full text-center relative reveal-fade-in">
         <button type="button" onclick="document.getElementById('announcement-modal').remove()"
                 class="absolute top-4 right-4 w-8 h-8 rounded-lg edge-bg-5 flex items-center justify-center">
             <span class="material-symbols-outlined text-on-surface-variant text-lg">close</span>
         </button>
 
-        <span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full mb-4">
-            <span class="material-symbols-outlined text-sm">campaign</span>
-            Announcement
-        </span>
+        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-3xl text-primary">campaign</span>
+        </div>
 
-        <h3 class="font-headline-sm text-headline-sm mb-2 pr-8">{{ latest_unread_notification.title }}</h3>
-        <p class="text-on-surface-variant text-sm mb-6">{{ latest_unread_notification.message }}</p>
+        <h3 class="font-headline-sm text-headline-sm mb-2">{{ latest_unread_notification.title }}</h3>
+        <p class="text-on-surface-variant text-sm mb-8">{{ latest_unread_notification.message }}</p>
 
-        <a href="{% url 'core:notification_mark_read' latest_unread_notification.pk %}" class="btn-primary w-full block text-center">
+        <a href="{% url 'core:notification_mark_read' latest_unread_notification.pk %}"
+           class="w-full block text-center bg-primary text-on-primary font-bold py-4 rounded-2xl hover:brightness-110 transition-all">
             Got it
         </a>
     </div>
@@ -29,118 +29,156 @@
 
 <div class="max-w-max-desktop mx-auto px-container-padding py-stack-lg pb-32 md:pb-stack-lg">
 
-    <!-- Greeting Hero Banner -->
-    <div class="relative rounded-xl overflow-hidden mb-8 scroll-reveal active">
-        <div class="absolute inset-0">
-            <img src="{% static 'core/img/global-markets-map.jpg' %}" alt=""
-                 class="w-full h-full object-cover scale-110" style="filter: blur(6px); opacity: 0.5;">
-            <div class="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40"></div>
+    <!-- Header: greeting + notification bell -->
+    <div class="flex items-center justify-between mb-6 reveal-fade-in">
+        <div>
+            <h1 class="font-display-lg text-2xl md:text-headline-md font-bold tracking-tight mb-1">
+                Welcome back, {{ user.first_name|default:user.username }}!
+            </h1>
+            <p class="text-on-surface-variant text-xs md:text-sm">{% now "l, F j, Y" %}</p>
         </div>
-        <div class="relative z-10 p-6 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="reveal-fade-in">
-                <h1 class="font-display-lg text-headline-md mb-1">Welcome back, {{ user.first_name|default:user.username }}!</h1>
-                <p class="text-on-surface-variant text-sm">{% now "l, F j, Y" %}</p>
-            </div>
-            {% if not user.kyc_verified %}
-            <a href="{% url 'core:kyc_status' %}"
-               class="inline-flex items-center gap-2 bg-primary text-on-primary font-bold px-5 py-2.5 rounded-lg w-fit hover:brightness-110 transition-all reveal-fade-in reveal-delay-1">
-                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-                Verify KYC
+        <div class="flex items-center gap-3">
+            <a href="{% url 'core:notifications' %}" class="relative w-10 h-10 rounded-full edge-bg-5 flex items-center justify-center hover:bg-primary/10 transition-colors">
+                <span class="material-symbols-outlined text-on-surface-variant text-lg">notifications</span>
+                {% if latest_unread_notification %}
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                {% endif %}
             </a>
-            {% endif %}
+            <div class="w-10 h-10 rounded-full border-2 border-primary p-0.5 flex items-center justify-center">
+                <div class="w-full h-full rounded-full bg-primary/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary text-lg">person</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Account Balance Card -->
-    <div class="glass-panel p-6 md:p-8 rounded-xl mb-6">
-        <div class="flex items-start justify-between mb-2">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
-                <span class="font-headline-sm text-headline-sm">Account Balance</span>
+    {% if not user.kyc_verified %}
+    <a href="{% url 'core:kyc_status' %}"
+       class="inline-flex items-center gap-2 bg-primary text-on-primary font-bold px-5 py-2.5 rounded-xl w-fit mb-6 hover:brightness-110 transition-all reveal-fade-in reveal-delay-1">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+        Verify KYC
+    </a>
+    {% endif %}
+
+    <!-- Balance Card -->
+    <div class="relative overflow-hidden rounded-3xl bg-primary/5 border border-primary/10 p-6 md:p-8 mb-6">
+        <div class="absolute -bottom-20 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="text-on-surface-variant text-xs uppercase tracking-widest font-bold mb-2">Account Balance</p>
+                <div class="flex items-center gap-2 mb-3">
+                    <h2 class="font-data-lg text-3xl md:text-4xl font-bold tracking-tight" id="balance-amount" data-value="{{ user.balance }}">${{ user.balance }}</h2>
+                    <button type="button" id="balance-toggle" aria-label="Show or hide balance"
+                            class="text-on-surface-variant hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-xl" id="balance-toggle-icon">visibility</span>
+                    </button>
+                </div>
+                <span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    Available for Withdrawal
+                </span>
             </div>
-            <button type="button" id="balance-toggle" aria-label="Show or hide balance"
-                    class="w-9 h-9 flex items-center justify-center rounded-lg edge-bg-5">
-                <span class="material-symbols-outlined text-on-surface-variant" id="balance-toggle-icon">visibility</span>
-            </button>
+
+            <!-- Stacked card visual flourish -->
+            <div class="hidden sm:flex relative h-24 w-32 shrink-0">
+                <div class="absolute right-0 bottom-0 glass-panel p-3 rounded-xl w-24 h-16 transform rotate-3 z-30 flex flex-col justify-end">
+                    <span class="text-[8px] font-bold text-on-surface">Portfolio</span>
+                </div>
+                <div class="absolute right-4 bottom-4 bg-primary/20 border border-primary/30 p-3 rounded-xl w-24 h-16 transform -rotate-6 z-20"></div>
+                <div class="absolute right-8 bottom-8 edge-bg-5 border edge-b-10 p-3 rounded-xl w-24 h-16 transform rotate-12 z-10"></div>
+            </div>
         </div>
-        <p class="text-on-surface-variant text-sm mb-4">Your current available balance</p>
 
-        <div class="font-data-lg text-4xl font-bold mb-4" id="balance-amount" data-value="${{ user.balance }}">${{ user.balance }}</div>
-
-        <span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full mb-6">
-            <span class="material-symbols-outlined text-sm">check_circle</span>
-            Available for Withdrawal
-        </span>
-
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative z-10 flex flex-col sm:flex-row gap-3 mt-6">
             <a href="{% url 'core:deposit_create' %}"
-               class="flex-1 text-center bg-primary text-on-primary font-bold py-3 rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2">
+               class="flex-1 text-center bg-primary text-on-primary font-bold py-3 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">add</span> Deposit
             </a>
             <a href="{% url 'core:withdrawal_create' %}"
-               class="flex-1 text-center edge-bg-5 border edge-b-10 font-bold py-3 rounded-lg hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-2">
+               class="flex-1 text-center edge-bg-5 border edge-b-10 font-bold py-3 rounded-xl hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">north_east</span> Withdraw
             </a>
         </div>
     </div>
 
+    <!-- Quick Actions -->
+    <section class="grid grid-cols-4 gap-4 mb-8">
+        <a href="{% url 'core:deposit_create' %}" class="flex flex-col items-center gap-2">
+            <span class="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30 text-primary shadow-[0_0_15px_rgba(78,222,163,0.15)]">
+                <span class="material-symbols-outlined">add</span>
+            </span>
+            <span class="text-xs font-medium text-on-surface-variant">Deposit</span>
+        </a>
+        <a href="{% url 'core:withdrawal_create' %}" class="flex flex-col items-center gap-2">
+            <span class="w-14 h-14 rounded-2xl edge-bg-5 border edge-b-5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">north_east</span>
+            </span>
+            <span class="text-xs font-medium text-on-surface-variant">Withdraw</span>
+        </a>
+        <a href="{% url 'core:investment_plans' %}" class="flex flex-col items-center gap-2">
+            <span class="w-14 h-14 rounded-2xl edge-bg-5 border edge-b-5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">trending_up</span>
+            </span>
+            <span class="text-xs font-medium text-on-surface-variant">Invest</span>
+        </a>
+        <a href="{% url 'core:referral' %}" class="flex flex-col items-center gap-2">
+            <span class="w-14 h-14 rounded-2xl edge-bg-5 border edge-b-5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">group</span>
+            </span>
+            <span class="text-xs font-medium text-on-surface-variant">Refer</span>
+        </a>
+    </section>
+
     <!-- Stat Grid -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="glass-panel p-5 rounded-xl">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-primary text-lg">payments</span>
-                <span class="text-on-surface-variant text-xs uppercase tracking-widest">Total Profit</span>
-            </div>
-            <p class="font-data-lg text-xl font-bold">${{ user.profit_balance }}</p>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-lg">payments</span>
+            </span>
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Total Profit</p>
+            <p class="font-data-lg text-xl font-bold text-primary">${{ user.profit_balance }}</p>
         </div>
-        <div class="glass-panel p-5 rounded-xl">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-primary text-lg">trending_up</span>
-                <span class="text-on-surface-variant text-xs uppercase tracking-widest">Investment Balance</span>
-            </div>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-lg">trending_up</span>
+            </span>
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Investment Balance</p>
             <p class="font-data-lg text-xl font-bold">${{ user.investment_balance }}</p>
         </div>
-        <div class="glass-panel p-5 rounded-xl">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-primary text-lg">group</span>
-                <span class="text-on-surface-variant text-xs uppercase tracking-widest">Referral Balance</span>
-            </div>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-lg">group</span>
+            </span>
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Referral Balance</p>
             <p class="font-data-lg text-xl font-bold">${{ user.referral_balance }}</p>
         </div>
-        <div class="glass-panel p-5 rounded-xl">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-primary text-lg">account_balance</span>
-                <span class="text-on-surface-variant text-xs uppercase tracking-widest">Currently Invested</span>
-            </div>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-lg">account_balance</span>
+            </span>
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Currently Invested</p>
             <p class="font-data-lg text-xl font-bold">${{ total_invested }}</p>
         </div>
     </div>
 
-    <!-- Trusted Worldwide — Image Showcase -->
+    <!-- Live Market Prices -->
     <div class="mb-8">
-        <h2 class="font-headline-md text-headline-md mb-4">Trusted by Traders Worldwide</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="img-card glass-panel scroll-reveal reveal-delay-1 h-40">
-                <img src="{% static 'core/img/hero-phone-portfolio.jpg' %}" alt="Track your portfolio in real time">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Real-time portfolio tracking</p>
-            </div>
-            <div class="img-card glass-panel scroll-reveal reveal-delay-2 h-40">
-                <img src="{% static 'core/img/trader-desk-night.jpg' %}" alt="Professional trading desk">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Professional-grade insights</p>
-            </div>
-            <div class="img-card glass-panel scroll-reveal reveal-delay-3 h-40">
-                <img src="{% static 'core/img/growth-shield-coins.jpg' %}" alt="Secure asset growth">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Secure, insured growth</p>
-            </div>
-            <div class="img-card glass-panel scroll-reveal reveal-delay-4 h-40">
-                <img src="{% static 'core/img/trading-terminal-charts.jpg' %}" alt="Institutional trading terminal">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Institutional-grade terminals</p>
-            </div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-headline-md text-headline-md">Live Market Prices</h2>
+            <span class="flex items-center gap-1.5 text-xs text-on-surface-variant">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                Live
+            </span>
         </div>
+        <div id="crypto-price-grid" class="space-y-3">
+            <!-- Filled in by JS below. Skeleton placeholders shown until data loads. -->
+            <div class="rounded-3xl edge-bg-5 border edge-b-5 p-4 animate-pulse h-20"></div>
+            <div class="rounded-3xl edge-bg-5 border edge-b-5 p-4 animate-pulse h-20"></div>
+            <div class="rounded-3xl edge-bg-5 border edge-b-5 p-4 animate-pulse h-20"></div>
+        </div>
+        <p id="crypto-price-error" class="hidden text-on-surface-variant text-sm mt-3">
+            Unable to load live prices right now. Please check back shortly.
+        </p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -155,18 +193,18 @@
             </div>
             <div class="space-y-3">
                 {% for inv in active_investments %}
-                <a href="{% url 'core:investment_detail' inv.pk %}" class="glass-panel p-4 rounded-xl flex items-center gap-4 edge-bg-5 transition-colors">
-                    <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                <a href="{% url 'core:investment_detail' inv.pk %}" class="rounded-3xl edge-bg-5 border edge-b-5 p-4 flex items-center gap-4 hover:border-primary/30 transition-colors">
+                    <div class="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-primary text-lg">trending_up</span>
                     </div>
-                    <div class="flex-1">
-                        <p class="font-bold text-on-surface">{{ inv.plan.name }}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-on-surface truncate">{{ inv.plan.name }}</p>
                         <p class="text-on-surface-variant text-xs">${{ inv.amount }} &middot; Ends {{ inv.ends_at|date:"M d, Y" }}</p>
                     </div>
-                    <span class="text-primary text-xs font-bold bg-primary/10 px-3 py-1 rounded-full">{{ inv.status|capfirst }}</span>
+                    <span class="text-primary text-xs font-bold bg-primary/10 px-3 py-1 rounded-full shrink-0">{{ inv.status|capfirst }}</span>
                 </a>
                 {% empty %}
-                <p class="text-on-surface-variant text-sm glass-panel p-4 rounded-xl">No active investments yet.</p>
+                <p class="text-on-surface-variant text-sm rounded-3xl edge-bg-5 border edge-b-5 p-4">No active investments yet.</p>
                 {% endfor %}
             </div>
         </div>
@@ -181,15 +219,15 @@
             </div>
             <div class="space-y-3">
                 {% for dep in recent_deposits %}
-                <a href="{% url 'core:deposit_detail' dep.pk %}" class="glass-panel p-4 rounded-xl flex items-center gap-4 edge-bg-5 transition-colors">
-                    <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                <a href="{% url 'core:deposit_detail' dep.pk %}" class="rounded-3xl edge-bg-5 border edge-b-5 p-4 flex items-center gap-4 hover:border-primary/30 transition-colors">
+                    <div class="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-primary text-lg">add</span>
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-1 min-w-0">
                         <p class="font-bold text-on-surface">${{ dep.amount }}</p>
                         <p class="text-on-surface-variant text-xs">{{ dep.created_at|date:"M d, Y H:i" }}</p>
                     </div>
-                    <span class="text-xs font-bold px-3 py-1 rounded-full
+                    <span class="text-xs font-bold px-3 py-1 rounded-full shrink-0
                         {% if dep.status == 'approved' %}text-primary bg-primary/10
                         {% elif dep.status == 'rejected' %}text-error bg-error/10
                         {% else %}text-on-surface-variant edge-bg-5{% endif %}">
@@ -197,7 +235,7 @@
                     </span>
                 </a>
                 {% empty %}
-                <p class="text-on-surface-variant text-sm glass-panel p-4 rounded-xl">No deposits yet.</p>
+                <p class="text-on-surface-variant text-sm rounded-3xl edge-bg-5 border edge-b-5 p-4">No deposits yet.</p>
                 {% endfor %}
             </div>
         </div>
@@ -211,7 +249,7 @@
                 View all <span class="material-symbols-outlined text-sm">chevron_right</span>
             </a>
         </div>
-        <div class="glass-panel rounded-xl overflow-hidden">
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 overflow-hidden">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b edge-b-5 text-on-surface-variant text-xs uppercase tracking-widest">
@@ -245,7 +283,7 @@
 
 <!-- Mobile Quick Actions Panel -->
 <div id="actions-panel" class="hidden fixed inset-0 z-40 flex items-end justify-center bg-black/50 md:hidden">
-    <div class="glass-panel w-full rounded-t-2xl p-6 pb-10">
+    <div class="glass-panel w-full rounded-t-[40px] p-6 pb-10">
         <div class="grid grid-cols-3 gap-4 mb-4">
             <a href="{% url 'core:investment_plans' %}" class="flex flex-col items-center gap-2">
                 <span class="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -287,28 +325,25 @@
     </div>
 </div>
 
-<!-- Mobile Bottom Nav -->
-<nav class="fixed bottom-0 left-0 right-0 z-30 bg-surface/95 backdrop-blur-xl border-t edge-b-10 flex items-center justify-around py-2 md:hidden">
-    <a href="{% url 'core:dashboard' %}" class="flex flex-col items-center gap-1 px-3 py-1 text-primary">
+<!-- Mobile Bottom Nav — floating pill style -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md h-16 glass-panel rounded-full px-8 flex items-center justify-between z-30 shadow-2xl md:hidden">
+    <a href="{% url 'core:dashboard' %}" class="text-primary">
         <span class="material-symbols-outlined text-xl">home</span>
-        <span class="text-[10px] font-bold">Home</span>
     </a>
-    <a href="{% url 'core:deposit_create' %}" class="flex flex-col items-center gap-1 px-3 py-1 text-on-surface-variant">
+    <a href="{% url 'core:deposit_create' %}" class="text-on-surface-variant hover:text-primary transition-colors">
         <span class="material-symbols-outlined text-xl">download</span>
-        <span class="text-[10px]">Deposit</span>
     </a>
-    <button type="button" id="actions-open" class="flex flex-col items-center -mt-6">
-        <span class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_0_20px_rgba(78,222,163,0.4)]">
-            <span class="material-symbols-outlined">bolt</span>
+    <!-- Floating Center Button -->
+    <button type="button" id="actions-open" class="relative -top-8">
+        <span class="w-14 h-14 bg-primary rounded-full shadow-[0_0_20px_rgba(78,222,163,0.4)] flex items-center justify-center text-on-primary">
+            <span class="material-symbols-outlined text-2xl">bolt</span>
         </span>
     </button>
-    <a href="{% url 'core:transactions' %}" class="flex flex-col items-center gap-1 px-3 py-1 text-on-surface-variant">
+    <a href="{% url 'core:transactions' %}" class="text-on-surface-variant hover:text-primary transition-colors">
         <span class="material-symbols-outlined text-xl">history</span>
-        <span class="text-[10px]">History</span>
     </a>
-    <a href="{% url 'core:profile' %}" class="flex flex-col items-center gap-1 px-3 py-1 text-on-surface-variant">
+    <a href="{% url 'core:profile' %}" class="text-on-surface-variant hover:text-primary transition-colors">
         <span class="material-symbols-outlined text-xl">person</span>
-        <span class="text-[10px]">Profile</span>
     </a>
 </nav>
 {% endblock %}
@@ -339,6 +374,81 @@
             amount.textContent = hidden ? "••••••" : realValue;
             icon.textContent = hidden ? "visibility_off" : "visibility";
         });
+    })();
+
+    // Live crypto prices — CoinGecko public API, no key required.
+    (function () {
+        var COINS = [
+            { id: "bitcoin",     symbol: "BTC",  name: "Bitcoin",  color: "text-orange-400",  bg: "bg-orange-400/10" },
+            { id: "ethereum",    symbol: "ETH",  name: "Ethereum", color: "text-indigo-400",  bg: "bg-indigo-400/10" },
+            { id: "tether",      symbol: "USDT", name: "Tether",   color: "text-emerald-400", bg: "bg-emerald-400/10" },
+            { id: "binancecoin", symbol: "BNB",  name: "BNB",      color: "text-yellow-400",  bg: "bg-yellow-400/10" },
+            { id: "dogecoin",    symbol: "DOGE", name: "Dogecoin", color: "text-amber-400",   bg: "bg-amber-400/10" },
+            { id: "litecoin",    symbol: "LTC",  name: "Litecoin", color: "text-slate-400",   bg: "bg-slate-400/10" }
+        ];
+
+        var ids = COINS.map(function (c) { return c.id; }).join(",");
+        var url = "https://api.coingecko.com/api/v3/simple/price?ids=" + ids +
+            "&vs_currencies=usd&include_24hr_change=true";
+
+        // Builds a simple 5-bar directional indicator — a visual cue only,
+        // not a rendering of historical price data.
+        function buildTrendBars(isUp) {
+            var heights = isUp ? [2, 4, 3, 6, 5] : [6, 4, 5, 3, 2];
+            var colorClass = isUp ? "bg-primary" : "bg-error";
+            return heights.map(function (h) {
+                return '<div class="w-1 ' + colorClass + '/60 h-' + h + ' rounded-t"></div>';
+            }).join("");
+        }
+
+        fetch(url)
+            .then(function (res) {
+                if (!res.ok) throw new Error("Request failed");
+                return res.json();
+            })
+            .then(function (data) {
+                var grid = document.getElementById("crypto-price-grid");
+                grid.innerHTML = "";
+
+                COINS.forEach(function (coin) {
+                    var entry = data[coin.id];
+                    if (!entry) return;
+
+                    var price = entry.usd;
+                    var change = entry.usd_24h_change || 0;
+                    var isUp = change >= 0;
+
+                    var priceDisplay = price >= 1
+                        ? "$" + price.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                        : "$" + price.toFixed(4);
+
+                    var row = document.createElement("div");
+                    row.className = "rounded-3xl edge-bg-5 border edge-b-5 p-4 flex items-center justify-between hover:border-primary/30 transition-all";
+                    row.innerHTML =
+                        '<div class="flex items-center gap-3">' +
+                            '<span class="w-11 h-11 rounded-full ' + coin.bg + ' ' + coin.color + ' flex items-center justify-center text-sm font-bold">' +
+                                coin.symbol.slice(0, 1) +
+                            '</span>' +
+                            '<div>' +
+                                '<p class="font-bold text-on-surface">' + coin.name + '</p>' +
+                                '<p class="text-on-surface-variant text-xs">' + coin.symbol + '/USD</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="hidden sm:flex items-end gap-0.5 h-8 w-14">' + buildTrendBars(isUp) + '</div>' +
+                        '<div class="text-right">' +
+                            '<p class="font-data-md font-bold">' + priceDisplay + '</p>' +
+                            '<p class="text-[11px] font-bold ' + (isUp ? 'text-primary' : 'text-error') + '">' +
+                                (isUp ? '▲ ' : '▼ ') + Math.abs(change).toFixed(2) + '%' +
+                            '</p>' +
+                        '</div>';
+
+                    grid.appendChild(row);
+                });
+            })
+            .catch(function () {
+                document.getElementById("crypto-price-grid").classList.add("hidden");
+                document.getElementById("crypto-price-error").classList.remove("hidden");
+            });
     })();
 </script>
 {% endblock %}
