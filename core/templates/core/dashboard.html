@@ -1,22 +1,54 @@
 {% extends "core/base.html" %}
+{% load static %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+
+{% if latest_unread_notification %}
+<div id="announcement-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
+    <div class="glass-panel max-w-sm w-full rounded-2xl p-6 relative reveal-fade-in">
+        <button type="button" onclick="document.getElementById('announcement-modal').remove()"
+                class="absolute top-4 right-4 w-8 h-8 rounded-lg edge-bg-5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">close</span>
+        </button>
+
+        <span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full mb-4">
+            <span class="material-symbols-outlined text-sm">campaign</span>
+            Announcement
+        </span>
+
+        <h3 class="font-headline-sm text-headline-sm mb-2 pr-8">{{ latest_unread_notification.title }}</h3>
+        <p class="text-on-surface-variant text-sm mb-6">{{ latest_unread_notification.message }}</p>
+
+        <a href="{% url 'core:notification_mark_read' latest_unread_notification.pk %}" class="btn-primary w-full block text-center">
+            Got it
+        </a>
+    </div>
+</div>
+{% endif %}
+
 <div class="max-w-max-desktop mx-auto px-container-padding py-stack-lg pb-32 md:pb-stack-lg">
 
-    <!-- Greeting -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-        <div>
-            <h1 class="font-display-lg text-headline-md mb-1">Welcome back, {{ user.first_name|default:user.username }}!</h1>
-            <p class="text-on-surface-variant text-sm">{% now "l, F j, Y" %}</p>
+    <!-- Greeting Hero Banner -->
+    <div class="relative rounded-xl overflow-hidden mb-8 scroll-reveal active">
+        <div class="absolute inset-0">
+            <img src="{% static 'core/img/global-markets-map.jpg' %}" alt=""
+                 class="w-full h-full object-cover scale-110" style="filter: blur(6px); opacity: 0.5;">
+            <div class="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40"></div>
         </div>
-        {% if not user.kyc_verified %}
-        <a href="{% url 'core:kyc_status' %}"
-           class="inline-flex items-center gap-2 bg-primary text-on-primary font-bold px-5 py-2.5 rounded-lg w-fit hover:brightness-110 transition-all">
-            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-            Verify KYC
-        </a>
-        {% endif %}
+        <div class="relative z-10 p-6 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="reveal-fade-in">
+                <h1 class="font-display-lg text-headline-md mb-1">Welcome back, {{ user.first_name|default:user.username }}!</h1>
+                <p class="text-on-surface-variant text-sm">{% now "l, F j, Y" %}</p>
+            </div>
+            {% if not user.kyc_verified %}
+            <a href="{% url 'core:kyc_status' %}"
+               class="inline-flex items-center gap-2 bg-primary text-on-primary font-bold px-5 py-2.5 rounded-lg w-fit hover:brightness-110 transition-all reveal-fade-in reveal-delay-1">
+                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                Verify KYC
+            </a>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Account Balance Card -->
@@ -81,6 +113,33 @@
                 <span class="text-on-surface-variant text-xs uppercase tracking-widest">Currently Invested</span>
             </div>
             <p class="font-data-lg text-xl font-bold">${{ total_invested }}</p>
+        </div>
+    </div>
+
+    <!-- Trusted Worldwide — Image Showcase -->
+    <div class="mb-8">
+        <h2 class="font-headline-md text-headline-md mb-4">Trusted by Traders Worldwide</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="img-card glass-panel scroll-reveal reveal-delay-1 h-40">
+                <img src="{% static 'core/img/hero-phone-portfolio.jpg' %}" alt="Track your portfolio in real time">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Real-time portfolio tracking</p>
+            </div>
+            <div class="img-card glass-panel scroll-reveal reveal-delay-2 h-40">
+                <img src="{% static 'core/img/trader-desk-night.jpg' %}" alt="Professional trading desk">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Professional-grade insights</p>
+            </div>
+            <div class="img-card glass-panel scroll-reveal reveal-delay-3 h-40">
+                <img src="{% static 'core/img/growth-shield-coins.jpg' %}" alt="Secure asset growth">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Secure, insured growth</p>
+            </div>
+            <div class="img-card glass-panel scroll-reveal reveal-delay-4 h-40">
+                <img src="{% static 'core/img/trading-terminal-charts.jpg' %}" alt="Institutional trading terminal">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                <p class="absolute bottom-3 left-3 right-3 text-white text-xs font-bold">Institutional-grade terminals</p>
+            </div>
         </div>
     </div>
 

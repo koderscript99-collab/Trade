@@ -1,53 +1,180 @@
-
 {% extends "core/admin/admin_base.html" %}
 {% block title %}User: {{ target_user.username }}{% endblock %}
+{% block page_title %}Manage User{% endblock %}
 {% block content %}
-<h1>User: {{ target_user.username }}</h1>
-<p>Email: {{ target_user.email }} | Referral Code: {{ target_user.referral_code }}</p>
 
-<h2>Edit Profile / Flags</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="save_profile">Save</button>
-</form>
+<div class="flex flex-col gap-6">
 
-<h2>Adjust Balance</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ adjust_form.as_p }}
-    <button type="submit" name="adjust_balance">Apply</button>
-</form>
+  <!-- Header -->
+  <div class="glass-panel rounded-xl p-6 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center border border-white/10">
+        <span class="material-symbols-outlined text-primary">person</span>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-on-surface tracking-tight">{{ target_user.username }}</h1>
+        <p class="text-xs text-on-surface-variant mt-0.5">{{ target_user.email }}</p>
+      </div>
+    </div>
+    <div class="text-right">
+      <p class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold">Referral Code</p>
+      <p class="font-data-md text-sm text-primary">{{ target_user.referral_code }}</p>
+    </div>
+  </div>
 
-<h2>Investments</h2>
-<table border="1">
-    <tr><th>Plan</th><th>Amount</th><th>Status</th><th>Ends</th></tr>
-    {% for inv in investments %}
-    <tr><td>{{ inv.plan.name }}</td><td>{{ inv.amount }}</td><td>{{ inv.status }}</td><td>{{ inv.ends_at }}</td></tr>
-    {% empty %}
-    <tr><td colspan="4">No investments.</td></tr>
-    {% endfor %}
-</table>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-<h2>Deposits</h2>
-<table border="1">
-    <tr><th>Amount</th><th>Status</th><th>Date</th></tr>
-    {% for d in deposits %}
-    <tr><td>{{ d.amount }}</td><td>{{ d.status }}</td><td>{{ d.created_at }}</td></tr>
-    {% empty %}
-    <tr><td colspan="3">No deposits.</td></tr>
-    {% endfor %}
-</table>
+    <!-- Profile / Flags -->
+    <div class="glass-panel rounded-xl p-6">
+      <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold mb-4 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">tune</span>Edit Profile / Flags
+      </h3>
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="[&_select]:bg-surface-container-high [&_select]:border-outline-variant [&_select]:text-on-surface [&_select]:rounded-md [&_select]:text-sm [&_select]:w-full
+                    [&_input[type=text]]:bg-surface-container-high [&_input[type=text]]:border-outline-variant [&_input[type=text]]:text-on-surface [&_input[type=text]]:rounded-md [&_input[type=text]]:text-sm [&_input[type=text]]:w-full
+                    [&_input[type=email]]:bg-surface-container-high [&_input[type=email]]:border-outline-variant [&_input[type=email]]:text-on-surface [&_input[type=email]]:rounded-md [&_input[type=email]]:text-sm [&_input[type=email]]:w-full
+                    [&_input[type=number]]:bg-surface-container-high [&_input[type=number]]:border-outline-variant [&_input[type=number]]:text-on-surface [&_input[type=number]]:rounded-md [&_input[type=number]]:text-sm [&_input[type=number]]:w-full
+                    [&_input[type=checkbox]]:rounded [&_input[type=checkbox]]:border-outline-variant [&_input[type=checkbox]]:text-primary [&_input[type=checkbox]]:bg-surface-container-high
+                    [&_textarea]:bg-surface-container-high [&_textarea]:border-outline-variant [&_textarea]:text-on-surface [&_textarea]:rounded-md [&_textarea]:text-sm [&_textarea]:w-full
+                    [&_label]:text-xs [&_label]:font-bold [&_label]:text-on-surface-variant [&_label]:uppercase [&_label]:tracking-wide [&_label]:mb-1 [&_label]:block
+                    [&_p]:mb-4 [&_p:last-child]:mb-0">
+          {{ form.as_p }}
+        </div>
+        <button type="submit" name="save_profile"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-bold text-sm px-5 py-2.5 rounded-md hover:brightness-110 transition-all">
+          <span class="material-symbols-outlined text-lg">save</span>Save
+        </button>
+      </form>
+    </div>
 
-<h2>Withdrawals</h2>
-<table border="1">
-    <tr><th>Amount</th><th>Status</th><th>Date</th></tr>
-    {% for w in withdrawals %}
-    <tr><td>{{ w.amount }}</td><td>{{ w.status }}</td><td>{{ w.created_at }}</td></tr>
-    {% empty %}
-    <tr><td colspan="3">No withdrawals.</td></tr>
-    {% endfor %}
-</table>
+    <!-- Adjust Balance -->
+    <div class="glass-panel rounded-xl p-6">
+      <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold mb-4 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">account_balance_wallet</span>Adjust Balance
+      </h3>
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="[&_select]:bg-surface-container-high [&_select]:border-outline-variant [&_select]:text-on-surface [&_select]:rounded-md [&_select]:text-sm [&_select]:w-full
+                    [&_input[type=text]]:bg-surface-container-high [&_input[type=text]]:border-outline-variant [&_input[type=text]]:text-on-surface [&_input[type=text]]:rounded-md [&_input[type=text]]:text-sm [&_input[type=text]]:w-full
+                    [&_input[type=number]]:bg-surface-container-high [&_input[type=number]]:border-outline-variant [&_input[type=number]]:text-on-surface [&_input[type=number]]:rounded-md [&_input[type=number]]:text-sm [&_input[type=number]]:w-full [&_input[type=number]]:font-data-md
+                    [&_textarea]:bg-surface-container-high [&_textarea]:border-outline-variant [&_textarea]:text-on-surface [&_textarea]:rounded-md [&_textarea]:text-sm [&_textarea]:w-full
+                    [&_label]:text-xs [&_label]:font-bold [&_label]:text-on-surface-variant [&_label]:uppercase [&_label]:tracking-wide [&_label]:mb-1 [&_label]:block
+                    [&_p]:mb-4 [&_p:last-child]:mb-0">
+          {{ adjust_form.as_p }}
+        </div>
+        <button type="submit" name="adjust_balance"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-tertiary/10 text-tertiary border border-tertiary/30 font-bold text-sm px-5 py-2.5 rounded-md hover:bg-tertiary/20 transition-all">
+          <span class="material-symbols-outlined text-lg">bolt</span>Apply
+        </button>
+      </form>
+    </div>
 
-<a href="{% url 'core:admin_users_list' %}">Back to Users</a>
+  </div>
+
+  <!-- Investments -->
+  <div class="glass-panel rounded-xl overflow-hidden">
+    <div class="px-5 py-3 border-b border-white/10">
+      <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">trending_up</span>Investments
+      </h3>
+    </div>
+    <div class="overflow-x-auto custom-scrollbar">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-white/10 text-left text-[11px] uppercase tracking-widest text-on-surface-variant/70">
+            <th class="px-5 py-3 font-bold">Plan</th>
+            <th class="px-5 py-3 font-bold">Amount</th>
+            <th class="px-5 py-3 font-bold">Status</th>
+            <th class="px-5 py-3 font-bold">Ends</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          {% for inv in investments %}
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-5 py-3 font-medium text-on-surface">{{ inv.plan.name }}</td>
+            <td class="px-5 py-3 font-data-md text-primary">{{ inv.amount }}</td>
+            <td class="px-5 py-3 text-on-surface-variant capitalize">{{ inv.status }}</td>
+            <td class="px-5 py-3 text-on-surface-variant text-xs">{{ inv.ends_at }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="px-5 py-8 text-center text-on-surface-variant text-sm">No investments.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Deposits -->
+    <div class="glass-panel rounded-xl overflow-hidden">
+      <div class="px-5 py-3 border-b border-white/10">
+        <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">payments</span>Deposits
+        </h3>
+      </div>
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/10 text-left text-[11px] uppercase tracking-widest text-on-surface-variant/70">
+              <th class="px-5 py-3 font-bold">Amount</th>
+              <th class="px-5 py-3 font-bold">Status</th>
+              <th class="px-5 py-3 font-bold">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            {% for d in deposits %}
+            <tr class="hover:bg-surface-variant/30 transition-colors">
+              <td class="px-5 py-3 font-data-md text-primary">{{ d.amount }}</td>
+              <td class="px-5 py-3 text-on-surface-variant capitalize">{{ d.status }}</td>
+              <td class="px-5 py-3 text-on-surface-variant text-xs">{{ d.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="px-5 py-8 text-center text-on-surface-variant text-sm">No deposits.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Withdrawals -->
+    <div class="glass-panel rounded-xl overflow-hidden">
+      <div class="px-5 py-3 border-b border-white/10">
+        <h3 class="text-[11px] uppercase tracking-widest text-on-surface-variant/70 font-bold flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">account_balance_wallet</span>Withdrawals
+        </h3>
+      </div>
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/10 text-left text-[11px] uppercase tracking-widest text-on-surface-variant/70">
+              <th class="px-5 py-3 font-bold">Amount</th>
+              <th class="px-5 py-3 font-bold">Status</th>
+              <th class="px-5 py-3 font-bold">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            {% for w in withdrawals %}
+            <tr class="hover:bg-surface-variant/30 transition-colors">
+              <td class="px-5 py-3 font-data-md text-primary">{{ w.amount }}</td>
+              <td class="px-5 py-3 text-on-surface-variant capitalize">{{ w.status }}</td>
+              <td class="px-5 py-3 text-on-surface-variant text-xs">{{ w.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="px-5 py-8 text-center text-on-surface-variant text-sm">No withdrawals.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <a href="{% url 'core:admin_users_list' %}"
+     class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors font-medium w-fit">
+    <span class="material-symbols-outlined text-lg">arrow_back</span>Back to Users
+  </a>
+
+</div>
 {% endblock %}

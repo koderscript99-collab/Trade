@@ -1,12 +1,38 @@
-
 {% extends "core/admin/admin_base.html" %}
 {% block title %}Delete Wallet{% endblock %}
+{% block page_title %}Delete Wallet{% endblock %}
 {% block content %}
-<h1>Delete Wallet: {{ object.coin }}</h1>
-<p>Are you sure you want to delete this wallet?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirm Delete</button>
-</form>
-<a href="{% url 'core:admin_wallets_list' %}">Cancel</a>
+
+<div class="max-w-md mx-auto flex flex-col gap-6">
+
+  <div class="glass-panel rounded-xl p-6 border-error/30">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-11 h-11 rounded-full bg-error/10 border border-error/30 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-error">warning</span>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-on-surface">Delete Wallet</h1>
+        <p class="text-xs text-on-surface-variant">This action cannot be undone.</p>
+      </div>
+    </div>
+
+    <p class="text-sm text-on-surface-variant mb-6">
+      Are you sure you want to delete the
+      <span class="font-bold text-on-surface">{{ object.coin }}</span> wallet? Users will no longer be able to deposit to this address.
+    </p>
+
+    <form method="post" class="flex flex-col sm:flex-row gap-3">
+      {% csrf_token %}
+      <button type="submit"
+              class="flex-1 inline-flex items-center justify-center gap-2 bg-error/10 text-error border border-error/30 font-bold text-sm px-5 py-2.5 rounded-md hover:bg-error/20 transition-all">
+        <span class="material-symbols-outlined text-lg">delete</span>Confirm Delete
+      </button>
+      <a href="{% url 'core:admin_wallets_list' %}"
+         class="flex-1 inline-flex items-center justify-center gap-2 bg-surface-variant/50 text-on-surface border border-white/10 font-bold text-sm px-5 py-2.5 rounded-md hover:bg-surface-variant transition-all">
+        Cancel
+      </a>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

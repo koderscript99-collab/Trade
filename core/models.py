@@ -284,22 +284,11 @@ class KYC(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
 
 class SiteSetting(models.Model):
-
     site_name = models.CharField(max_length=100)
-
-    logo = models.ImageField(upload_to="logo/")
-
+    logo = models.ImageField(upload_to="logo/", blank=True, null=True)   # <-- add blank=True, null=True
     minimum_deposit = models.DecimalField(max_digits=20, decimal_places=2)
-
     minimum_withdrawal = models.DecimalField(max_digits=20, decimal_places=2)
-
     referral_bonus = models.DecimalField(max_digits=5, decimal_places=2)
-
     maintenance_mode = models.BooleanField(default=False)
-
     support_email = models.EmailField()
-
     support_phone = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.site_name

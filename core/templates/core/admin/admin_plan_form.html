@@ -1,12 +1,43 @@
-
 {% extends "core/admin/admin_base.html" %}
 {% block title %}Investment Plan Form{% endblock %}
+{% block page_title %}{% if object %}Edit Plan{% else %}New Plan{% endif %}{% endblock %}
 {% block content %}
-<h1>{% if object %}Edit Plan{% else %}New Plan{% endif %}</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-<a href="{% url 'core:admin_plans_list' %}">Back to Plans</a>
+
+<div class="max-w-xl mx-auto flex flex-col gap-6">
+
+  <div>
+    <h1 class="text-2xl font-bold text-on-surface tracking-tight flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">{% if object %}edit{% else %}add_circle{% endif %}</span>
+      {% if object %}Edit Plan{% else %}New Plan{% endif %}
+    </h1>
+    <p class="text-sm text-on-surface-variant mt-1">
+      {% if object %}Update the terms of this investment plan.{% else %}Define a new investment plan for users to subscribe to.{% endif %}
+    </p>
+  </div>
+
+  <div class="glass-panel rounded-xl p-6">
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div class="[&_select]:bg-surface-container-high [&_select]:border-outline-variant [&_select]:text-on-surface [&_select]:rounded-md [&_select]:text-sm [&_select]:w-full
+                  [&_input[type=text]]:bg-surface-container-high [&_input[type=text]]:border-outline-variant [&_input[type=text]]:text-on-surface [&_input[type=text]]:rounded-md [&_input[type=text]]:text-sm [&_input[type=text]]:w-full
+                  [&_input[type=number]]:bg-surface-container-high [&_input[type=number]]:border-outline-variant [&_input[type=number]]:text-on-surface [&_input[type=number]]:rounded-md [&_input[type=number]]:text-sm [&_input[type=number]]:w-full [&_input[type=number]]:font-data-md
+                  [&_input[type=checkbox]]:rounded [&_input[type=checkbox]]:border-outline-variant [&_input[type=checkbox]]:text-primary [&_input[type=checkbox]]:bg-surface-container-high
+                  [&_textarea]:bg-surface-container-high [&_textarea]:border-outline-variant [&_textarea]:text-on-surface [&_textarea]:rounded-md [&_textarea]:text-sm [&_textarea]:w-full
+                  [&_label]:text-xs [&_label]:font-bold [&_label]:text-on-surface-variant [&_label]:uppercase [&_label]:tracking-wide [&_label]:mb-1 [&_label]:block
+                  [&_p]:mb-4 [&_p:last-child]:mb-0">
+        {{ form.as_p }}
+      </div>
+      <button type="submit"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-bold text-sm px-5 py-2.5 rounded-md hover:brightness-110 transition-all">
+        <span class="material-symbols-outlined text-lg">save</span>Save
+      </button>
+    </form>
+  </div>
+
+  <a href="{% url 'core:admin_plans_list' %}"
+     class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors font-medium w-fit">
+    <span class="material-symbols-outlined text-lg">arrow_back</span>Back to Plans
+  </a>
+
+</div>
 {% endblock %}

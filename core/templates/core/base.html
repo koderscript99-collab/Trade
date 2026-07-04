@@ -146,48 +146,162 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    /* Shared form styling for Django's {{ form.as_p }} output */
+    .styled-form p { margin-bottom: 1.25rem; }
+    .styled-form label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.4rem;
+        color: rgb(var(--color-on-surface));
+    }
+    .styled-form input[type="text"],
+    .styled-form input[type="email"],
+    .styled-form input[type="password"],
+    .styled-form input[type="number"],
+    .styled-form input[type="date"],
+    .styled-form input[type="tel"],
+    .styled-form input[type="file"],
+    .styled-form select,
+    .styled-form textarea {
+        width: 100%;
+        background: rgba(var(--color-edge), 0.05);
+        border: 1px solid rgba(var(--color-edge), 0.15);
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.9rem;
+        color: rgb(var(--color-on-surface));
+        font-size: 0.9rem;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .styled-form input:focus,
+    .styled-form select:focus,
+    .styled-form textarea:focus {
+        outline: none;
+        border-color: #4edea3;
+        background: rgba(var(--color-edge), 0.08);
+    }
+    .styled-form .helptext {
+        display: block;
+        font-size: 0.75rem;
+        color: rgb(var(--color-on-surface-variant));
+        margin-top: 0.35rem;
+    }
+    .styled-form ul.errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 0.5rem 0;
+        color: #ea3943;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: #4edea3;
+        color: #003824;
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        transition: filter 0.2s ease;
+    }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: rgba(var(--color-edge), 0.05);
+        border: 1px solid rgba(var(--color-edge), 0.1);
+        color: rgb(var(--color-on-surface));
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        transition: background 0.2s ease;
+    }
+    .btn-secondary:hover { background: rgba(var(--color-edge), 0.08); }
+
+    .reveal-delay-1 { transition-delay: 0.12s; animation-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; animation-delay: 0.24s; }
+    .reveal-delay-3 { transition-delay: 0.36s; animation-delay: 0.36s; }
+    .reveal-delay-4 { transition-delay: 0.48s; animation-delay: 0.48s; }
+
+    .reveal-fade-in {
+        opacity: 0;
+        animation: fadeSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .img-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0.75rem;
+    }
+    .img-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .img-card:hover img {
+        transform: scale(1.08);
+    }
 </style>
 {% block extra_head %}{% endblock %}
 </head>
 <body class="font-body-md text-body-md selection:bg-primary/30">
 
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b edge-b-10 shadow-sm flex items-center justify-between px-container-padding h-16">
-    <a href="{% url 'core:landing' %}" class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
-        <span class="font-display-lg text-headline-md tracking-tighter text-primary">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b edge-b-10 shadow-sm flex items-center justify-between px-4 md:px-6 h-14">
+    <a href="{% url 'core:landing' %}" class="flex items-center gap-2 shrink-0">
+        <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
+        <span class="font-display-lg text-sm md:text-base font-bold tracking-tighter text-primary">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-8">
-        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:investment_plans' %}">Markets</a>
-        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:news_list' %}">News</a>
+    <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="{% url 'core:investment_plans' %}">Markets</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="{% url 'core:news_list' %}">News</a>
         {% if user.is_authenticated %}
-        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:transactions' %}">Transactions</a>
-        <a class="text-on-surface-variant hover:text-primary transition-colors py-1" href="{% url 'core:referral' %}">Referrals</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="{% url 'core:transactions' %}">Transactions</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="{% url 'core:referral' %}">Referrals</a>
         {% endif %}
     </nav>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2">
+        {% if user.is_authenticated %}
+        <a href="{% url 'core:notifications' %}" class="relative w-9 h-9 flex items-center justify-center rounded-lg edge-bg-5 transition-all" aria-label="Notifications">
+            <span class="material-symbols-outlined text-on-surface text-lg">notifications</span>
+            {% if unread_notifications_count > 0 %}
+            <span class="absolute -top-1 -right-1 bg-error text-[10px] font-bold text-black w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                {{ unread_notifications_count }}
+            </span>
+            {% endif %}
+        </a>
+        {% endif %}
+
         <button id="theme-toggle" type="button" aria-label="Toggle light and dark mode"
-                class="w-10 h-10 flex items-center justify-center rounded-lg edge-bg-5 transition-all">
-            <span class="material-symbols-outlined text-on-surface" id="theme-toggle-icon">dark_mode</span>
+                class="w-9 h-9 flex items-center justify-center rounded-lg edge-bg-5 transition-all">
+            <span class="material-symbols-outlined text-on-surface text-lg" id="theme-toggle-icon">dark_mode</span>
         </button>
 
         {% if user.is_authenticated %}
-            <a href="{% url 'core:notifications' %}" class="hidden md:block text-on-surface edge-bg-5 px-4 py-2 rounded-lg transition-all">
-                {{ user.username }}
-            </a>
-            <a href="{% url 'core:dashboard' %}" class="bg-primary text-on-primary font-bold px-6 py-2 rounded-lg active:scale-95 transition-transform">
+            <a href="{% url 'core:dashboard' %}" class="bg-primary text-on-primary text-sm font-bold px-4 py-1.5 rounded-lg active:scale-95 transition-transform">
                 Dashboard
             </a>
-            <a href="{% url 'core:logout' %}" class="hidden md:block text-on-surface-variant hover:text-primary px-2 py-2 rounded-lg transition-all">
+            <a href="{% url 'core:logout' %}" class="hidden md:block text-on-surface-variant hover:text-primary text-sm px-1 transition-all">
                 Logout
             </a>
         {% else %}
-            <a href="{% url 'core:login' %}" class="hidden md:block text-on-surface edge-bg-5 px-4 py-2 rounded-lg transition-all">
+            <a href="{% url 'core:login' %}" class="hidden md:block text-on-surface text-sm edge-bg-5 px-4 py-1.5 rounded-lg transition-all">
                 Login
             </a>
-            <a href="{% url 'core:register' %}" class="bg-primary text-on-primary font-bold px-6 py-2 rounded-lg active:scale-95 transition-transform">
+            <a href="{% url 'core:register' %}" class="bg-primary text-on-primary text-sm font-bold px-4 py-1.5 rounded-lg active:scale-95 transition-transform">
                 Get Started
             </a>
         {% endif %}
@@ -195,48 +309,37 @@
 </header>
 
 {% if messages %}
-<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-container-padding space-y-2">
+<div class="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-container-padding space-y-2">
     {% for message in messages %}
     <div class="glass-panel px-4 py-3 rounded-lg text-sm text-on-surface">{{ message }}</div>
     {% endfor %}
 </div>
 {% endif %}
 
-<main class="pt-16">
+<main class="pt-14">
 {% block content %}{% endblock %}
 </main>
 
 <!-- Footer -->
 <footer class="bg-surface-container-lowest border-t edge-b-5 w-full">
-    <div class="flex flex-col md:flex-row justify-between items-center py-stack-lg px-container-padding max-w-max-desktop mx-auto">
-        <div class="flex flex-col gap-4 mb-8 md:mb-0">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">currency_exchange</span>
-                <span class="font-headline-sm text-headline-sm text-on-surface">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
-            </div>
-            <p class="text-on-surface-variant max-w-xs text-sm">
-                {{ site_settings.site_name|default:"Our platform" }} — digital asset investing, built on trust and transparency.
-            </p>
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 py-5 px-4 md:px-6 max-w-max-desktop mx-auto text-sm">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-lg">currency_exchange</span>
+            <span class="font-bold text-on-surface">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
         </div>
-        <div class="flex flex-wrap justify-center gap-x-12 gap-y-4 mb-8 md:mb-0">
-            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:investment_plans' %}">Markets</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:news_list' %}">News</a>
+        <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-on-surface-variant text-xs">
+            <a class="hover:text-primary transition-colors" href="{% url 'core:investment_plans' %}">Markets</a>
+            <a class="hover:text-primary transition-colors" href="{% url 'core:news_list' %}">News</a>
             {% if user.is_authenticated %}
-            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:kyc_status' %}">KYC</a>
+            <a class="hover:text-primary transition-colors" href="{% url 'core:kyc_status' %}">KYC</a>
             {% else %}
-            <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="{% url 'core:login' %}">Login</a>
+            <a class="hover:text-primary transition-colors" href="{% url 'core:login' %}">Login</a>
             {% endif %}
-        </div>
-        <div class="flex gap-4">
             {% if site_settings.support_email %}
-            <a class="w-10 h-10 glass-panel rounded-full flex items-center justify-center hover:text-primary transition-all" href="mailto:{{ site_settings.support_email }}">
-                <span class="material-symbols-outlined text-sm">mail</span>
-            </a>
+            <a class="hover:text-primary transition-colors" href="mailto:{{ site_settings.support_email }}">Support</a>
             {% endif %}
         </div>
-    </div>
-    <div class="text-center py-6 border-t edge-b-5">
-        <p class="text-on-surface-variant/60 text-xs">&copy; {% now "Y" %} {{ site_settings.site_name|default:"NEON_TRADE" }}. All rights reserved.</p>
+        <p class="text-on-surface-variant/60 text-xs">&copy; {% now "Y" %} {{ site_settings.site_name|default:"NEON_TRADE" }}</p>
     </div>
 </footer>
 

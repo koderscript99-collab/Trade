@@ -121,6 +121,9 @@ def dashboard_view(request):
     active_investments = Investment.objects.filter(user=user, status="running")
     recent_transactions = Transaction.objects.filter(user=user).order_by("-created_at")[:10]
     recent_deposits = Deposit.objects.filter(user=user).order_by("-created_at")[:5]
+    latest_unread_notification = Notification.objects.filter(
+        user=user, is_read=False
+    ).order_by("-created_at").first()
 
     context = {
         "active_investments": active_investments,
@@ -128,6 +131,7 @@ def dashboard_view(request):
         "recent_deposits": recent_deposits,
         "total_invested": active_investments.aggregate(s=Sum("amount"))["s"] or 0,
         "referral_count": user.referrals.count(),
+        "latest_unread_notification": latest_unread_notification,
     }
     return render(request, "core/dashboard.html", context)
 
@@ -368,3 +372,12 @@ def transactions_view(request):
     paginator = Paginator(transactions, 25)
     page = paginator.get_page(request.GET.get("page"))
     return render(request, "core/transactions.html", {"page_obj": page})
+
+
+@login_required
+def notification_mark_read_view(request, pk):
+    notification = get_object_or_404(Notification, pk=pk, user=request.user)
+    notification.is_read = True
+    notification.save(update_fields=["is_read"])
+    next_url = request.META.get("HTTP_REFERER") or "core:dashboard"
+    return redirect(next_url if next_url.startswith("/") else "core:dashboard")

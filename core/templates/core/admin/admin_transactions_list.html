@@ -1,39 +1,133 @@
-
 {% extends "core/admin/admin_base.html" %}
 {% block title %}Transactions{% endblock %}
+{% block page_title %}All Transactions{% endblock %}
 {% block content %}
-<h1>All Transactions</h1>
-<p>
-    Filter by type:
-    <a href="?type=deposit">Deposit</a> |
-    <a href="?type=withdrawal">Withdrawal</a> |
-    <a href="?type=investment">Investment</a> |
-    <a href="?type=profit">Profit</a> |
-    <a href="?type=referral">Referral</a> |
-    <a href="{% url 'core:admin_transactions_list' %}">All</a>
-</p>
-<table border="1">
-    <tr><th>User</th><th>Type</th><th>Amount</th><th>Description</th><th>Date</th></tr>
-    {% for tx in page_obj %}
-    <tr>
-        <td>{{ tx.user.username }}</td>
-        <td>{{ tx.transaction_type }}</td>
-        <td>{{ tx.amount }}</td>
-        <td>{{ tx.description }}</td>
-        <td>{{ tx.created_at }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">No transactions found.</td></tr>
-    {% endfor %}
-</table>
 
-<div>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
-    {% endif %}
+<div class="flex flex-col gap-6">
+
+  <div class="flex flex-col gap-3">
+    <div>
+      <h1 class="text-2xl font-bold text-on-surface tracking-tight">All Transactions</h1>
+      <p class="text-sm text-on-surface-variant mt-1">Full ledger of platform activity across all users.</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-1 glass-panel rounded-lg p-1 w-fit">
+      <a href="?type=deposit"
+         class="px-3 py-1.5 rounded-md text-xs font-bold transition-all
+         {% if request.GET.type == 'deposit' %}bg-primary text-on-primary{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+        Deposit
+      </a>
+      <a href="?type=withdrawal"
+         class="px-3 py-1.5 rounded-md text-xs font-bold transition-all
+         {% if request.GET.type == 'withdrawal' %}bg-primary text-on-primary{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+        Withdrawal
+      </a>
+      <a href="?type=investment"
+         class="px-3 py-1.5 rounded-md text-xs font-bold transition-all
+         {% if request.GET.type == 'investment' %}bg-primary text-on-primary{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+        Investment
+      </a>
+      <a href="?type=profit"
+         class="px-3 py-1.5 rounded-md text-xs font-bold transition-all
+         {% if request.GET.type == 'profit' %}bg-primary text-on-primary{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+        Profit
+      </a>
+      <a href="?type=referral"
+         class="px-3 py-1.5 rounded-md text-xs font-bold transition-all
+         {% if request.GET.type == 'referral' %}bg-primary text-on-primary{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+        Referral
+      </a>
+      <a href="{% url 'core:admin_transactions_list' %}"
+         class="px-3 py-1.5 rounded-md text-xs font-bold transition-all
+         {% if not request.GET.type %}bg-primary text-on-primary{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+        All
+      </a>
+    </div>
+  </div>
+
+  <div class="glass-panel rounded-xl overflow-hidden">
+    <div class="overflow-x-auto custom-scrollbar">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-white/10 text-left text-[11px] uppercase tracking-widest text-on-surface-variant/70">
+            <th class="px-5 py-3 font-bold">User</th>
+            <th class="px-5 py-3 font-bold">Type</th>
+            <th class="px-5 py-3 font-bold">Amount</th>
+            <th class="px-5 py-3 font-bold">Description</th>
+            <th class="px-5 py-3 font-bold">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          {% for tx in page_obj %}
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-5 py-3 font-medium text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base text-on-surface-variant">person</span>{{ tx.user.username }}
+            </td>
+            <td class="px-5 py-3">
+              {% if tx.transaction_type == "deposit" %}
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/30">
+                <span class="material-symbols-outlined text-xs">payments</span>Deposit
+              </span>
+              {% elif tx.transaction_type == "withdrawal" %}
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-tertiary/10 text-tertiary border border-tertiary/30">
+                <span class="material-symbols-outlined text-xs">account_balance_wallet</span>Withdrawal
+              </span>
+              {% elif tx.transaction_type == "investment" %}
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/30">
+                <span class="material-symbols-outlined text-xs">trending_up</span>Investment
+              </span>
+              {% elif tx.transaction_type == "profit" %}
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/30">
+                <span class="material-symbols-outlined text-xs">paid</span>Profit
+              </span>
+              {% elif tx.transaction_type == "referral" %}
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-tertiary/10 text-tertiary border border-tertiary/30">
+                <span class="material-symbols-outlined text-xs">group</span>Referral
+              </span>
+              {% else %}
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-surface-variant text-on-surface-variant border border-white/10 capitalize">
+                {{ tx.transaction_type }}
+              </span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-3 font-data-md text-primary">{{ tx.amount }}</td>
+            <td class="px-5 py-3 text-on-surface-variant">{{ tx.description }}</td>
+            <td class="px-5 py-3 text-on-surface-variant text-xs">{{ tx.created_at }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="px-5 py-12 text-center text-on-surface-variant">
+              <div class="flex flex-col items-center gap-2">
+                <span class="material-symbols-outlined text-3xl opacity-40">history</span>
+                <span class="text-sm">No transactions found.</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex items-center justify-between px-5 py-3 border-t border-white/10 text-xs text-on-surface-variant">
+      <div>
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="inline-flex items-center gap-1 hover:text-primary transition-colors font-bold">
+          <span class="material-symbols-outlined text-sm">chevron_left</span>Previous
+        </a>
+        {% endif %}
+      </div>
+      <div class="font-medium">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</div>
+      <div>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="inline-flex items-center gap-1 hover:text-primary transition-colors font-bold">
+          Next<span class="material-symbols-outlined text-sm">chevron_right</span>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}

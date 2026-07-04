@@ -1,12 +1,39 @@
-
-
 {% extends "core/admin/admin_base.html" %}
 {% block title %}Site Settings{% endblock %}
+{% block page_title %}Site Settings{% endblock %}
 {% block content %}
-<h1>Site Settings</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Settings</button>
-</form>
+
+<div class="max-w-2xl mx-auto flex flex-col gap-6">
+
+  <div>
+    <h1 class="text-2xl font-bold text-on-surface tracking-tight flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">settings</span>Site Settings
+    </h1>
+    <p class="text-sm text-on-surface-variant mt-1">Global configuration for the platform.</p>
+  </div>
+
+  <div class="glass-panel rounded-xl p-6">
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+      <div class="[&_select]:bg-surface-container-high [&_select]:border-outline-variant [&_select]:text-on-surface [&_select]:rounded-md [&_select]:text-sm [&_select]:w-full
+                  [&_input[type=text]]:bg-surface-container-high [&_input[type=text]]:border-outline-variant [&_input[type=text]]:text-on-surface [&_input[type=text]]:rounded-md [&_input[type=text]]:text-sm [&_input[type=text]]:w-full
+                  [&_input[type=email]]:bg-surface-container-high [&_input[type=email]]:border-outline-variant [&_input[type=email]]:text-on-surface [&_input[type=email]]:rounded-md [&_input[type=email]]:text-sm [&_input[type=email]]:w-full
+                  [&_input[type=number]]:bg-surface-container-high [&_input[type=number]]:border-outline-variant [&_input[type=number]]:text-on-surface [&_input[type=number]]:rounded-md [&_input[type=number]]:text-sm [&_input[type=number]]:w-full
+                  [&_input[type=url]]:bg-surface-container-high [&_input[type=url]]:border-outline-variant [&_input[type=url]]:text-on-surface [&_input[type=url]]:rounded-md [&_input[type=url]]:text-sm [&_input[type=url]]:w-full
+                  [&_input[type=checkbox]]:rounded [&_input[type=checkbox]]:border-outline-variant [&_input[type=checkbox]]:text-primary [&_input[type=checkbox]]:bg-surface-container-high
+                  [&_input[type=file]]:text-on-surface-variant [&_input[type=file]]:text-sm
+                  [&_textarea]:bg-surface-container-high [&_textarea]:border-outline-variant [&_textarea]:text-on-surface [&_textarea]:rounded-md [&_textarea]:text-sm [&_textarea]:w-full
+                  [&_label]:text-xs [&_label]:font-bold [&_label]:text-on-surface-variant [&_label]:uppercase [&_label]:tracking-wide [&_label]:mb-1 [&_label]:block
+                  [&_p]:mb-5 [&_p:last-child]:mb-0
+                  [&_hr]:border-white/10 [&_hr]:my-6">
+        {{ form.as_p }}
+      </div>
+      <button type="submit"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-bold text-sm px-5 py-2.5 rounded-md hover:brightness-110 transition-all">
+        <span class="material-symbols-outlined text-lg">save</span>Save Settings
+      </button>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

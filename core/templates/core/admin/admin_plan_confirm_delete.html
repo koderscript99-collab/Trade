@@ -1,6 +1,6 @@
 {% extends "core/admin/admin_base.html" %}
-{% block title %}Delete Article{% endblock %}
-{% block page_title %}Delete Article{% endblock %}
+{% block title %}Delete Plan{% endblock %}
+{% block page_title %}Delete Plan{% endblock %}
 {% block content %}
 
 <div class="max-w-md mx-auto flex flex-col gap-6">
@@ -11,14 +11,14 @@
         <span class="material-symbols-outlined text-error">warning</span>
       </div>
       <div>
-        <h1 class="text-lg font-bold text-on-surface">Delete Article</h1>
+        <h1 class="text-lg font-bold text-on-surface">Delete Plan</h1>
         <p class="text-xs text-on-surface-variant">This action cannot be undone.</p>
       </div>
     </div>
 
     <p class="text-sm text-on-surface-variant mb-6">
       Are you sure you want to delete
-      <span class="font-bold text-on-surface">"{{ object.title }}"</span>? It will be removed from the news feed immediately.
+      <span class="font-bold text-on-surface">"{{ object.name }}"</span>? Users will no longer be able to subscribe to this plan.
     </p>
 
     <form method="post" class="flex flex-col sm:flex-row gap-3">
@@ -27,7 +27,7 @@
               class="flex-1 inline-flex items-center justify-center gap-2 bg-error/10 text-error border border-error/30 font-bold text-sm px-5 py-2.5 rounded-md hover:bg-error/20 transition-all">
         <span class="material-symbols-outlined text-lg">delete</span>Confirm Delete
       </button>
-      <a href="{% url 'core:admin_news_list' %}"
+      <a href="{% url 'core:admin_plans_list' %}"
          class="flex-1 inline-flex items-center justify-center gap-2 bg-surface-variant/50 text-on-surface border border-white/10 font-bold text-sm px-5 py-2.5 rounded-md hover:bg-surface-variant transition-all">
         Cancel
       </a>
