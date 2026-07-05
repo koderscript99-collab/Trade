@@ -11,14 +11,11 @@
                 class="absolute top-4 right-4 w-8 h-8 rounded-lg edge-bg-5 flex items-center justify-center">
             <span class="material-symbols-outlined text-on-surface-variant text-lg">close</span>
         </button>
-
         <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <span class="material-symbols-outlined text-3xl text-primary">campaign</span>
         </div>
-
         <h3 class="font-headline-sm text-headline-sm mb-2">{{ latest_unread_notification.title }}</h3>
         <p class="text-on-surface-variant text-sm mb-8">{{ latest_unread_notification.message }}</p>
-
         <a href="{% url 'core:notification_mark_read' latest_unread_notification.pk %}"
            class="w-full block text-center bg-primary text-on-primary font-bold py-4 rounded-2xl hover:brightness-110 transition-all">
             Got it
@@ -29,26 +26,28 @@
 
 <div class="max-w-max-desktop mx-auto px-container-padding py-stack-lg pb-32 md:pb-stack-lg">
 
-    <!-- Header: greeting + notification bell -->
+    <!-- In-page app header -->
     <div class="flex items-center justify-between mb-6 reveal-fade-in">
-        <div>
-            <h1 class="font-display-lg text-2xl md:text-headline-md font-bold tracking-tight mb-1">
-                Welcome back, {{ user.first_name|default:user.username }}!
-            </h1>
-            <p class="text-on-surface-variant text-xs md:text-sm">{% now "l, F j, Y" %}</p>
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-2xl">sync</span>
+            <span class="font-bold tracking-widest uppercase text-sm">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
         </div>
         <div class="flex items-center gap-3">
             <a href="{% url 'core:notifications' %}" class="relative w-10 h-10 rounded-full edge-bg-5 flex items-center justify-center hover:bg-primary/10 transition-colors">
                 <span class="material-symbols-outlined text-on-surface-variant text-lg">notifications</span>
-                {% if latest_unread_notification %}
+                {% if unread_notifications_count > 0 %}
                 <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
                 {% endif %}
             </a>
-            <div class="w-10 h-10 rounded-full border-2 border-primary p-0.5 flex items-center justify-center">
+            <button type="button" id="dashboard-theme-toggle" aria-label="Toggle theme"
+                    class="w-10 h-10 rounded-full edge-bg-5 flex items-center justify-center hover:bg-primary/10 transition-colors">
+                <span class="material-symbols-outlined text-on-surface-variant text-lg">light_mode</span>
+            </button>
+            <a href="{% url 'core:profile' %}" class="w-10 h-10 rounded-full border-2 border-primary p-0.5 flex items-center justify-center shrink-0">
                 <div class="w-full h-full rounded-full bg-primary/10 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-lg">person</span>
+                    <span class="text-primary text-sm font-bold">{{ user.username|first|upper }}</span>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -60,32 +59,42 @@
     </a>
     {% endif %}
 
-    <!-- Balance Card -->
-    <div class="relative overflow-hidden rounded-3xl bg-primary/5 border border-primary/10 p-6 md:p-8 mb-6">
-        <div class="absolute -bottom-20 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="relative z-10 flex items-start justify-between gap-4">
+    <!-- Total Balance Card w/ animated chart -->
+    <div class="relative overflow-hidden rounded-3xl bg-primary/5 border border-primary/10 p-6 md:p-8 mb-6 reveal-fade-in reveal-delay-1">
+        <div class="absolute -bottom-24 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
             <div class="flex-1 min-w-0">
-                <p class="text-on-surface-variant text-xs uppercase tracking-widest font-bold mb-2">Account Balance</p>
-                <div class="flex items-center gap-2 mb-3">
-                    <h2 class="font-data-lg text-3xl md:text-4xl font-bold tracking-tight" id="balance-amount" data-value="{{ user.balance }}">${{ user.balance }}</h2>
-                    <button type="button" id="balance-toggle" aria-label="Show or hide balance"
-                            class="text-on-surface-variant hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined text-xl" id="balance-toggle-icon">visibility</span>
+                <div class="flex items-center gap-2 mb-2">
+                    <p class="text-on-surface-variant text-xs uppercase tracking-widest font-bold">Total Balance</p>
+                    <button type="button" id="balance-toggle" aria-label="Show or hide balance" class="text-on-surface-variant hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-base" id="balance-toggle-icon">visibility</span>
                     </button>
                 </div>
+                <h2 class="font-display-lg text-3xl md:text-4xl font-bold tracking-tight mb-3" id="balance-amount" data-value="{{ user.balance }}">${{ user.balance }}</h2>
                 <span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">
                     <span class="material-symbols-outlined text-sm">check_circle</span>
                     Available for Withdrawal
                 </span>
             </div>
 
-            <!-- Stacked card visual flourish -->
-            <div class="hidden sm:flex relative h-24 w-32 shrink-0">
-                <div class="absolute right-0 bottom-0 glass-panel p-3 rounded-xl w-24 h-16 transform rotate-3 z-30 flex flex-col justify-end">
-                    <span class="text-[8px] font-bold text-on-surface">Portfolio</span>
-                </div>
-                <div class="absolute right-4 bottom-4 bg-primary/20 border border-primary/30 p-3 rounded-xl w-24 h-16 transform -rotate-6 z-20"></div>
-                <div class="absolute right-8 bottom-8 edge-bg-5 border edge-b-10 p-3 rounded-xl w-24 h-16 transform rotate-12 z-10"></div>
+            <!-- Decorative animated growth line — illustrative only, not a real balance history -->
+            <div class="w-full md:w-48 h-20 shrink-0">
+                <svg viewBox="0 0 200 80" class="w-full h-full" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="balance-chart-fill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#4edea3" stop-opacity="0.35"/>
+                            <stop offset="100%" stop-color="#4edea3" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,60 L20,55 L40,58 L60,40 L80,45 L100,28 L120,35 L140,15 L160,20 L180,8 L200,5 L200,80 L0,80 Z"
+                          fill="url(#balance-chart-fill)"/>
+                    <path id="balance-chart-line"
+                          d="M0,60 L20,55 L40,58 L60,40 L80,45 L100,28 L120,35 L140,15 L160,20 L180,8 L200,5"
+                          fill="none" stroke="#4edea3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="200" cy="5" r="4" fill="#4edea3">
+                        <animate attributeName="r" values="4;6;4" dur="1.8s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
             </div>
         </div>
 
@@ -102,180 +111,130 @@
     </div>
 
     <!-- Quick Actions -->
-    <section class="grid grid-cols-4 gap-4 mb-8">
-        <a href="{% url 'core:deposit_create' %}" class="flex flex-col items-center gap-2">
-            <span class="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30 text-primary shadow-[0_0_15px_rgba(78,222,163,0.15)]">
+    <section class="grid grid-cols-4 gap-3 md:gap-4 mb-8 reveal-fade-in reveal-delay-2">
+        <a href="{% url 'core:deposit_create' %}" class="flex flex-col items-center gap-2 rounded-2xl bg-primary/10 border border-primary/30 py-4">
+            <span class="w-11 h-11 rounded-xl bg-primary/20 text-primary flex items-center justify-center">
                 <span class="material-symbols-outlined">add</span>
             </span>
-            <span class="text-xs font-medium text-on-surface-variant">Deposit</span>
+            <span class="text-xs font-bold text-on-surface">Deposit</span>
         </a>
-        <a href="{% url 'core:withdrawal_create' %}" class="flex flex-col items-center gap-2">
-            <span class="w-14 h-14 rounded-2xl edge-bg-5 border edge-b-5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+        <a href="{% url 'core:withdrawal_create' %}" class="flex flex-col items-center gap-2 rounded-2xl edge-bg-5 border edge-b-5 py-4">
+            <span class="w-11 h-11 rounded-xl edge-bg-5 text-on-surface-variant flex items-center justify-center">
                 <span class="material-symbols-outlined">north_east</span>
             </span>
-            <span class="text-xs font-medium text-on-surface-variant">Withdraw</span>
+            <span class="text-xs font-bold text-on-surface-variant">Withdraw</span>
         </a>
-        <a href="{% url 'core:investment_plans' %}" class="flex flex-col items-center gap-2">
-            <span class="w-14 h-14 rounded-2xl edge-bg-5 border edge-b-5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+        <a href="{% url 'core:investment_plans' %}" class="flex flex-col items-center gap-2 rounded-2xl edge-bg-5 border edge-b-5 py-4">
+            <span class="w-11 h-11 rounded-xl edge-bg-5 text-on-surface-variant flex items-center justify-center">
                 <span class="material-symbols-outlined">trending_up</span>
             </span>
-            <span class="text-xs font-medium text-on-surface-variant">Invest</span>
+            <span class="text-xs font-bold text-on-surface-variant">Invest</span>
         </a>
-        <a href="{% url 'core:referral' %}" class="flex flex-col items-center gap-2">
-            <span class="w-14 h-14 rounded-2xl edge-bg-5 border edge-b-5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+        <a href="{% url 'core:referral' %}" class="flex flex-col items-center gap-2 rounded-2xl edge-bg-5 border edge-b-5 py-4">
+            <span class="w-11 h-11 rounded-xl edge-bg-5 text-on-surface-variant flex items-center justify-center">
                 <span class="material-symbols-outlined">group</span>
             </span>
-            <span class="text-xs font-medium text-on-surface-variant">Refer</span>
+            <span class="text-xs font-bold text-on-surface-variant">Refer</span>
         </a>
     </section>
 
-    <!-- Stat Grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
-                <span class="material-symbols-outlined text-lg">payments</span>
-            </span>
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Total Profit</p>
-            <p class="font-data-lg text-xl font-bold text-primary">${{ user.profit_balance }}</p>
-        </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
-                <span class="material-symbols-outlined text-lg">trending_up</span>
-            </span>
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Investment Balance</p>
-            <p class="font-data-lg text-xl font-bold">${{ user.investment_balance }}</p>
-        </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
-                <span class="material-symbols-outlined text-lg">group</span>
-            </span>
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Referral Balance</p>
-            <p class="font-data-lg text-xl font-bold">${{ user.referral_balance }}</p>
-        </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
-                <span class="material-symbols-outlined text-lg">account_balance</span>
-            </span>
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Currently Invested</p>
-            <p class="font-data-lg text-xl font-bold">${{ total_invested }}</p>
-        </div>
-    </div>
-
-    <!-- Live Market Prices -->
+    <!-- Market Overview -->
     <div class="mb-8">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-headline-md text-headline-md">Live Market Prices</h2>
+            <h2 class="font-headline-md text-headline-md">Market Overview</h2>
             <span class="flex items-center gap-1.5 text-xs text-on-surface-variant">
                 <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                 Live
             </span>
         </div>
-        <div id="crypto-price-grid" class="space-y-3">
-            <!-- Filled in by JS below. Skeleton placeholders shown until data loads. -->
-            <div class="rounded-3xl edge-bg-5 border edge-b-5 p-4 animate-pulse h-20"></div>
-            <div class="rounded-3xl edge-bg-5 border edge-b-5 p-4 animate-pulse h-20"></div>
-            <div class="rounded-3xl edge-bg-5 border edge-b-5 p-4 animate-pulse h-20"></div>
+        <div id="crypto-price-list" class="rounded-3xl edge-bg-5 border edge-b-5 divide-y divide-white/5 overflow-hidden">
+            <div class="p-4 animate-pulse h-16"></div>
+            <div class="p-4 animate-pulse h-16"></div>
+            <div class="p-4 animate-pulse h-16"></div>
+            <div class="p-4 animate-pulse h-16"></div>
+            <div class="p-4 animate-pulse h-16"></div>
         </div>
         <p id="crypto-price-error" class="hidden text-on-surface-variant text-sm mt-3">
             Unable to load live prices right now. Please check back shortly.
         </p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <!-- Active Investments -->
-        <div>
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="font-headline-md text-headline-md">Active Investments</h2>
-                <a href="{% url 'core:investment_list' %}" class="text-primary text-sm font-bold flex items-center gap-1">
-                    View all <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </a>
-            </div>
-            <div class="space-y-3">
-                {% for inv in active_investments %}
-                <a href="{% url 'core:investment_detail' inv.pk %}" class="rounded-3xl edge-bg-5 border edge-b-5 p-4 flex items-center gap-4 hover:border-primary/30 transition-colors">
-                    <div class="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-primary text-lg">trending_up</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-on-surface truncate">{{ inv.plan.name }}</p>
-                        <p class="text-on-surface-variant text-xs">${{ inv.amount }} &middot; Ends {{ inv.ends_at|date:"M d, Y" }}</p>
-                    </div>
-                    <span class="text-primary text-xs font-bold bg-primary/10 px-3 py-1 rounded-full shrink-0">{{ inv.status|capfirst }}</span>
-                </a>
-                {% empty %}
-                <p class="text-on-surface-variant text-sm rounded-3xl edge-bg-5 border edge-b-5 p-4">No active investments yet.</p>
-                {% endfor %}
-            </div>
+    <!-- Grow Your Wealth CTA -->
+    <a href="{% url 'core:investment_plans' %}"
+       class="flex items-center gap-4 rounded-3xl bg-primary/5 border border-primary/20 p-5 mb-8 hover:border-primary/40 transition-colors">
+        <span class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-2xl">savings</span>
+        </span>
+        <div class="flex-1 min-w-0">
+            <p class="font-bold text-on-surface">Grow Your Wealth</p>
+            <p class="text-on-surface-variant text-xs">Start investing in top crypto plans and watch your portfolio grow.</p>
         </div>
+        <span class="hidden sm:inline-flex items-center gap-1 bg-primary text-on-primary font-bold text-sm px-4 py-2 rounded-xl shrink-0">
+            Start Investing <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </span>
+        <span class="sm:hidden material-symbols-outlined text-primary shrink-0">chevron_right</span>
+    </a>
 
-        <!-- Recent Deposits -->
-        <div>
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="font-headline-md text-headline-md">Recent Deposits</h2>
-                <a href="{% url 'core:deposit_list' %}" class="text-primary text-sm font-bold flex items-center gap-1">
-                    View all <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </a>
-            </div>
-            <div class="space-y-3">
-                {% for dep in recent_deposits %}
-                <a href="{% url 'core:deposit_detail' dep.pk %}" class="rounded-3xl edge-bg-5 border edge-b-5 p-4 flex items-center gap-4 hover:border-primary/30 transition-colors">
-                    <div class="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-primary text-lg">add</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-on-surface">${{ dep.amount }}</p>
-                        <p class="text-on-surface-variant text-xs">{{ dep.created_at|date:"M d, Y H:i" }}</p>
-                    </div>
-                    <span class="text-xs font-bold px-3 py-1 rounded-full shrink-0
-                        {% if dep.status == 'approved' %}text-primary bg-primary/10
-                        {% elif dep.status == 'rejected' %}text-error bg-error/10
-                        {% else %}text-on-surface-variant edge-bg-5{% endif %}">
-                        {{ dep.status|capfirst }}
-                    </span>
-                </a>
-                {% empty %}
-                <p class="text-on-surface-variant text-sm rounded-3xl edge-bg-5 border edge-b-5 p-4">No deposits yet.</p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="mt-8">
+    <!-- Recent Activity (unified transaction feed) -->
+    <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="font-headline-md text-headline-md">Recent Transactions</h2>
+            <h2 class="font-headline-md text-headline-md">Recent Activity</h2>
             <a href="{% url 'core:transactions' %}" class="text-primary text-sm font-bold flex items-center gap-1">
                 View all <span class="material-symbols-outlined text-sm">chevron_right</span>
             </a>
         </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 overflow-hidden">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b edge-b-5 text-on-surface-variant text-xs uppercase tracking-widest">
-                        <th class="text-left font-normal px-4 py-3">Date</th>
-                        <th class="text-left font-normal px-4 py-3">Type</th>
-                        <th class="text-right font-normal px-4 py-3">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for tx in recent_transactions %}
-                    <tr class="border-b edge-b-5 last:border-0">
-                        <td class="px-4 py-3 text-on-surface-variant text-xs">{{ tx.created_at|date:"M d, Y H:i" }}</td>
-                        <td class="px-4 py-3">
-                            <p class="font-bold text-on-surface">{{ tx.get_transaction_type_display }}</p>
-                            <p class="text-on-surface-variant text-xs">{{ tx.description }}</p>
-                        </td>
-                        <td class="px-4 py-3 text-right font-data-md font-bold
-                            {% if tx.transaction_type == 'withdrawal' %}text-error{% else %}text-primary{% endif %}">
-                            {% if tx.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}${{ tx.amount }}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr><td colspan="3" class="px-4 py-6 text-center text-on-surface-variant text-sm">No transactions yet.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 divide-y divide-white/5 overflow-hidden">
+            {% for tx in recent_transactions %}
+            <div class="flex items-center gap-4 p-4">
+                <span class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0
+                    {% if tx.transaction_type == 'investment' %}bg-primary/10 text-primary
+                    {% elif tx.transaction_type == 'deposit' %}bg-indigo-400/10 text-indigo-400
+                    {% elif tx.transaction_type == 'withdrawal' %}bg-error/10 text-error
+                    {% elif tx.transaction_type == 'profit' %}bg-primary/10 text-primary
+                    {% else %}bg-yellow-500/10 text-yellow-500{% endif %}">
+                    <span class="material-symbols-outlined text-lg">
+                        {% if tx.transaction_type == 'investment' %}trending_up
+                        {% elif tx.transaction_type == 'deposit' %}call_received
+                        {% elif tx.transaction_type == 'withdrawal' %}north_east
+                        {% elif tx.transaction_type == 'profit' %}payments
+                        {% else %}group{% endif %}
+                    </span>
+                </span>
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-on-surface">{{ tx.get_transaction_type_display }}</p>
+                    <p class="text-on-surface-variant text-xs truncate">{{ tx.description }}</p>
+                </div>
+                <div class="text-right shrink-0">
+                    <p class="font-data-md font-bold
+                        {% if tx.transaction_type == 'withdrawal' %}text-error{% else %}text-primary{% endif %}">
+                        {% if tx.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}${{ tx.amount }}
+                    </p>
+                    <p class="text-on-surface-variant text-[11px]">{{ tx.created_at|date:"M d, g:i A" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-on-surface-variant text-sm p-4">No activity yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Secondary stats: kept for full detail, tucked below the main feed -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Total Profit</p>
+            <p class="font-data-lg text-xl font-bold text-primary">${{ user.profit_balance }}</p>
+        </div>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Investment Balance</p>
+            <p class="font-data-lg text-xl font-bold">${{ user.investment_balance }}</p>
+        </div>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Referral Balance</p>
+            <p class="font-data-lg text-xl font-bold">${{ user.referral_balance }}</p>
+        </div>
+        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
+            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Currently Invested</p>
+            <p class="font-data-lg text-xl font-bold">${{ total_invested }}</p>
         </div>
     </div>
 
@@ -325,25 +284,32 @@
     </div>
 </div>
 
-<!-- Mobile Bottom Nav — floating pill style -->
-<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md h-16 glass-panel rounded-full px-8 flex items-center justify-between z-30 shadow-2xl md:hidden">
-    <a href="{% url 'core:dashboard' %}" class="text-primary">
+<!-- Bottom Nav — floating pill style -->
+{% url 'core:dashboard' as dash_url %}
+{% url 'core:investment_plans' as markets_url %}
+{% url 'core:investment_list' as portfolio_url %}
+{% url 'core:profile' as profile_url %}
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-panel rounded-full px-6 py-2 flex items-center justify-between z-30 shadow-2xl md:hidden">
+    <a href="{{ dash_url }}" class="flex flex-col items-center gap-0.5 px-2 py-1 {% if request.path == dash_url %}text-primary{% else %}text-on-surface-variant{% endif %}">
         <span class="material-symbols-outlined text-xl">home</span>
+        <span class="text-[10px] font-bold">Dashboard</span>
     </a>
-    <a href="{% url 'core:deposit_create' %}" class="text-on-surface-variant hover:text-primary transition-colors">
-        <span class="material-symbols-outlined text-xl">download</span>
+    <a href="{{ markets_url }}" class="flex flex-col items-center gap-0.5 px-2 py-1 {% if request.path == markets_url %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-xl">bar_chart</span>
+        <span class="text-[10px]">Markets</span>
     </a>
-    <!-- Floating Center Button -->
-    <button type="button" id="actions-open" class="relative -top-8">
+    <button type="button" id="actions-open" class="relative -top-6">
         <span class="w-14 h-14 bg-primary rounded-full shadow-[0_0_20px_rgba(78,222,163,0.4)] flex items-center justify-center text-on-primary">
             <span class="material-symbols-outlined text-2xl">bolt</span>
         </span>
     </button>
-    <a href="{% url 'core:transactions' %}" class="text-on-surface-variant hover:text-primary transition-colors">
-        <span class="material-symbols-outlined text-xl">history</span>
+    <a href="{{ portfolio_url }}" class="flex flex-col items-center gap-0.5 px-2 py-1 {% if request.path == portfolio_url %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-xl">pie_chart</span>
+        <span class="text-[10px]">Portfolio</span>
     </a>
-    <a href="{% url 'core:profile' %}" class="text-on-surface-variant hover:text-primary transition-colors">
+    <a href="{{ profile_url }}" class="flex flex-col items-center gap-0.5 px-2 py-1 {% if request.path == profile_url %}text-primary{% else %}text-on-surface-variant{% endif %}">
         <span class="material-symbols-outlined text-xl">person</span>
+        <span class="text-[10px]">Profile</span>
     </a>
 </nav>
 {% endblock %}
@@ -376,6 +342,35 @@
         });
     })();
 
+    // In-page theme toggle just proxies the real header toggle so there's one source of truth.
+    (function () {
+        var proxyBtn = document.getElementById("dashboard-theme-toggle");
+        var realBtn = document.getElementById("theme-toggle");
+        if (!proxyBtn || !realBtn) return;
+
+        function syncIcon() {
+            var isDark = document.documentElement.classList.contains("dark");
+            proxyBtn.querySelector(".material-symbols-outlined").textContent = isDark ? "light_mode" : "dark_mode";
+        }
+        syncIcon();
+        proxyBtn.addEventListener("click", function () {
+            realBtn.click();
+            syncIcon();
+        });
+    })();
+
+    // Animate the balance card's line drawing in on load (decorative only).
+    (function () {
+        var line = document.getElementById("balance-chart-line");
+        if (!line) return;
+        var length = line.getTotalLength();
+        line.style.strokeDasharray = length;
+        line.style.strokeDashoffset = length;
+        line.getBoundingClientRect(); // force reflow
+        line.style.transition = "stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)";
+        line.style.strokeDashoffset = "0";
+    })();
+
     // Live crypto prices — CoinGecko public API, no key required.
     (function () {
         var COINS = [
@@ -383,22 +378,30 @@
             { id: "ethereum",    symbol: "ETH",  name: "Ethereum", color: "text-indigo-400",  bg: "bg-indigo-400/10" },
             { id: "tether",      symbol: "USDT", name: "Tether",   color: "text-emerald-400", bg: "bg-emerald-400/10" },
             { id: "binancecoin", symbol: "BNB",  name: "BNB",      color: "text-yellow-400",  bg: "bg-yellow-400/10" },
-            { id: "dogecoin",    symbol: "DOGE", name: "Dogecoin", color: "text-amber-400",   bg: "bg-amber-400/10" },
-            { id: "litecoin",    symbol: "LTC",  name: "Litecoin", color: "text-slate-400",   bg: "bg-slate-400/10" }
+            { id: "dogecoin",    symbol: "DOGE", name: "Dogecoin", color: "text-amber-400",   bg: "bg-amber-400/10" }
         ];
 
         var ids = COINS.map(function (c) { return c.id; }).join(",");
         var url = "https://api.coingecko.com/api/v3/simple/price?ids=" + ids +
             "&vs_currencies=usd&include_24hr_change=true";
 
-        // Builds a simple 5-bar directional indicator — a visual cue only,
-        // not a rendering of historical price data.
-        function buildTrendBars(isUp) {
-            var heights = isUp ? [2, 4, 3, 6, 5] : [6, 4, 5, 3, 2];
-            var colorClass = isUp ? "bg-primary" : "bg-error";
-            return heights.map(function (h) {
-                return '<div class="w-1 ' + colorClass + '/60 h-' + h + ' rounded-t"></div>';
-            }).join("");
+        // Small seeded pseudo-random walk, biased by the real trend direction.
+        // This is a visual cue only — not a plot of actual historical prices.
+        function buildSparkline(isUp, seed) {
+            var points = [];
+            var y = 20;
+            for (var i = 0; i <= 8; i++) {
+                var bias = isUp ? -2.2 : 2.2;
+                var noise = (Math.sin(seed + i * 1.7) * 4);
+                y = Math.max(2, Math.min(38, y + bias + noise));
+                points.push((i * 9) + "," + y.toFixed(1));
+            }
+            var color = isUp ? "#4edea3" : "#ffb4ab";
+            return '<svg viewBox="0 0 72 40" class="w-16 h-8 md:w-20 md:h-10" preserveAspectRatio="none">' +
+                '<polyline points="' + points.join(" ") + '" fill="none" stroke="' + color + '" ' +
+                'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ' +
+                'style="stroke-dasharray:200;stroke-dashoffset:200;animation:sparkline-draw 1.2s ease forwards;"/>' +
+                '</svg>';
         }
 
         fetch(url)
@@ -407,10 +410,10 @@
                 return res.json();
             })
             .then(function (data) {
-                var grid = document.getElementById("crypto-price-grid");
-                grid.innerHTML = "";
+                var list = document.getElementById("crypto-price-list");
+                list.innerHTML = "";
 
-                COINS.forEach(function (coin) {
+                COINS.forEach(function (coin, idx) {
                     var entry = data[coin.id];
                     if (!entry) return;
 
@@ -423,32 +426,36 @@
                         : "$" + price.toFixed(4);
 
                     var row = document.createElement("div");
-                    row.className = "rounded-3xl edge-bg-5 border edge-b-5 p-4 flex items-center justify-between hover:border-primary/30 transition-all";
+                    row.className = "flex items-center gap-3 p-4 hover:bg-primary/5 transition-colors";
                     row.innerHTML =
-                        '<div class="flex items-center gap-3">' +
-                            '<span class="w-11 h-11 rounded-full ' + coin.bg + ' ' + coin.color + ' flex items-center justify-center text-sm font-bold">' +
-                                coin.symbol.slice(0, 1) +
-                            '</span>' +
-                            '<div>' +
-                                '<p class="font-bold text-on-surface">' + coin.name + '</p>' +
-                                '<p class="text-on-surface-variant text-xs">' + coin.symbol + '/USD</p>' +
-                            '</div>' +
+                        '<span class="w-11 h-11 rounded-full ' + coin.bg + ' ' + coin.color + ' flex items-center justify-center text-sm font-bold shrink-0">' +
+                            coin.symbol.slice(0, 1) +
+                        '</span>' +
+                        '<div class="flex-1 min-w-0">' +
+                            '<p class="font-bold text-on-surface">' + coin.name + '</p>' +
+                            '<p class="text-on-surface-variant text-xs">' + coin.symbol + '/USD</p>' +
                         '</div>' +
-                        '<div class="hidden sm:flex items-end gap-0.5 h-8 w-14">' + buildTrendBars(isUp) + '</div>' +
-                        '<div class="text-right">' +
+                        '<div class="hidden sm:block shrink-0">' + buildSparkline(isUp, idx * 3.1) + '</div>' +
+                        '<div class="text-right shrink-0">' +
                             '<p class="font-data-md font-bold">' + priceDisplay + '</p>' +
-                            '<p class="text-[11px] font-bold ' + (isUp ? 'text-primary' : 'text-error') + '">' +
-                                (isUp ? '▲ ' : '▼ ') + Math.abs(change).toFixed(2) + '%' +
-                            '</p>' +
+                            '<span class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full ' +
+                                (isUp ? 'text-primary bg-primary/10' : 'text-error bg-error/10') + '">' +
+                                (isUp ? '▲' : '▼') + ' ' + Math.abs(change).toFixed(2) + '%' +
+                            '</span>' +
                         '</div>';
 
-                    grid.appendChild(row);
+                    list.appendChild(row);
                 });
             })
             .catch(function () {
-                document.getElementById("crypto-price-grid").classList.add("hidden");
+                document.getElementById("crypto-price-list").classList.add("hidden");
                 document.getElementById("crypto-price-error").classList.remove("hidden");
             });
     })();
 </script>
+<style>
+    @keyframes sparkline-draw {
+        to { stroke-dashoffset: 0; }
+    }
+</style>
 {% endblock %}
