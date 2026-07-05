@@ -26,30 +26,7 @@
 
 <div class="max-w-max-desktop mx-auto px-container-padding py-stack-lg pb-32 md:pb-stack-lg">
 
-    <!-- In-page app header -->
-    <div class="flex items-center justify-between mb-6 reveal-fade-in">
-        <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-2xl">sync</span>
-            <span class="font-bold tracking-widest uppercase text-sm">{{ site_settings.site_name|default:"NEON_TRADE" }}</span>
-        </div>
-        <div class="flex items-center gap-3">
-            <a href="{% url 'core:notifications' %}" class="relative w-10 h-10 rounded-full edge-bg-5 flex items-center justify-center hover:bg-primary/10 transition-colors">
-                <span class="material-symbols-outlined text-on-surface-variant text-lg">notifications</span>
-                {% if unread_notifications_count > 0 %}
-                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-                {% endif %}
-            </a>
-            <button type="button" id="dashboard-theme-toggle" aria-label="Toggle theme"
-                    class="w-10 h-10 rounded-full edge-bg-5 flex items-center justify-center hover:bg-primary/10 transition-colors">
-                <span class="material-symbols-outlined text-on-surface-variant text-lg">light_mode</span>
-            </button>
-            <a href="{% url 'core:profile' %}" class="w-10 h-10 rounded-full border-2 border-primary p-0.5 flex items-center justify-center shrink-0">
-                <div class="w-full h-full rounded-full bg-primary/10 flex items-center justify-center">
-                    <span class="text-primary text-sm font-bold">{{ user.username|first|upper }}</span>
-                </div>
-            </a>
-        </div>
-    </div>
+    
 
     {% if not user.kyc_verified %}
     <a href="{% url 'core:kyc_status' %}"
