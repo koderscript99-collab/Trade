@@ -286,6 +286,20 @@ class KYC(models.Model):
 class SiteSetting(models.Model):
     site_name = models.CharField(max_length=100)
     logo = models.ImageField(upload_to="logo/", blank=True, null=True)   # <-- add blank=True, null=True
+
+    # Link preview (Open Graph / WhatsApp / Facebook / Twitter) fields
+    site_description = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="Shown as the description in link previews (WhatsApp, Facebook, Telegram, etc.)"
+    )
+    og_image = models.ImageField(
+        upload_to="og_images/",
+        blank=True,
+        null=True,
+        help_text="Recommended size: 1200x630px. Used as the thumbnail when your site link is shared."
+    )
+
     minimum_deposit = models.DecimalField(max_digits=20, decimal_places=2)
     minimum_withdrawal = models.DecimalField(max_digits=20, decimal_places=2)
     referral_bonus = models.DecimalField(max_digits=5, decimal_places=2)

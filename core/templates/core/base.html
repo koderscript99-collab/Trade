@@ -1,9 +1,29 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>{% block title %}{{ site_settings.site_name|default:"NEON_TRADE" }}{% endblock %}</title>
+
+<!-- SEO / Link Preview meta tags -->
+<meta name="description" content="{% block meta_description %}{{ site_settings.site_description|default:"NEON_TRADE - Complete Crypto Trading Platform" }}{% endblock %}">
+
+<!-- Open Graph tags (used by WhatsApp, Facebook, LinkedIn, Telegram, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site_settings.site_name|default:'NEON_TRADE' }}">
+<meta property="og:title" content="{% block og_title %}{{ site_settings.site_name|default:"NEON_TRADE" }} - Complete Trade Platform System{% endblock %}">
+<meta property="og:description" content="{% block og_description %}{{ site_settings.site_description|default:"Providing you the opportunity to copy experts across multiple assets for seamless profits." }}{% endblock %}">
+<meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% if site_settings.og_image %}{{ site_settings.og_image.url }}{% else %}{% static 'images/og-preview.jpg' %}{% endif %}{% endblock %}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter / X card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ site_settings.site_name|default:'NEON_TRADE' }}">
+<meta name="twitter:description" content="{{ site_settings.site_description|default:'Complete Trade Platform System' }}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% if site_settings.og_image %}{{ site_settings.og_image.url }}{% else %}{% static 'images/og-preview.jpg' %}{% endif %}">
 
 <!-- Set the theme class before first paint, to avoid a light/dark flash -->
 <script>

@@ -12,6 +12,28 @@
     <p class="text-sm text-on-surface-variant mt-1">Global configuration for the platform.</p>
   </div>
 
+  {% if site_settings.logo or site_settings.og_image %}
+  <div class="glass-panel rounded-xl p-6 flex flex-col sm:flex-row gap-6">
+    {% if site_settings.logo %}
+    <div class="flex-1">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-2">Current Logo</p>
+      <div class="rounded-lg overflow-hidden border border-white/10 bg-surface-container-low w-full aspect-square max-w-[160px] flex items-center justify-center">
+        <img src="{{ site_settings.logo.url }}" alt="Current site logo" class="w-full h-full object-contain">
+      </div>
+    </div>
+    {% endif %}
+    {% if site_settings.og_image %}
+    <div class="flex-1">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-2">Current Link Preview Image</p>
+      <div class="rounded-lg overflow-hidden border border-white/10 bg-surface-container-low w-full aspect-[1200/630] max-w-[280px] flex items-center justify-center">
+        <img src="{{ site_settings.og_image.url }}" alt="Current link preview image" class="w-full h-full object-cover">
+      </div>
+      <p class="text-[11px] text-on-surface-variant mt-1">Shown when your site link is shared on WhatsApp, Facebook, Telegram, etc.</p>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
   <div class="glass-panel rounded-xl p-6">
     <form method="post" enctype="multipart/form-data" class="space-y-4">
       {% csrf_token %}

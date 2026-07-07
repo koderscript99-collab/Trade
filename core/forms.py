@@ -153,9 +153,13 @@ class SiteSettingForm(forms.ModelForm):
     class Meta:
         model = SiteSetting
         fields = [
-            "site_name", "logo", "minimum_deposit", "minimum_withdrawal",
+            "site_name", "logo", "site_description", "og_image",
+            "minimum_deposit", "minimum_withdrawal",
             "referral_bonus", "maintenance_mode", "support_email", "support_phone",
         ]
+        widgets = {
+            "site_description": forms.Textarea(attrs={"rows": 3, "maxlength": 300}),
+        }
 
 
 class AdminUserEditForm(forms.ModelForm):
