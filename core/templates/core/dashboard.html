@@ -85,6 +85,26 @@
                 <span class="material-symbols-outlined text-sm">north_east</span> Withdraw
             </a>
         </div>
+
+        <!-- Secondary stats — inline row, no boxed cards, lives inside the Total Balance card -->
+        <div class="relative z-10 mt-6 pt-5 border-t edge-b-10 flex items-center divide-x divide-white/10">
+            <div class="flex-1 text-center px-2">
+                <p class="text-on-surface-variant text-[10px] md:text-xs uppercase tracking-widest mb-1">Total Profit</p>
+                <p class="font-data-md md:font-data-lg text-sm md:text-lg font-bold text-primary truncate">${{ user.profit_balance }}</p>
+            </div>
+            <div class="flex-1 text-center px-2">
+                <p class="text-on-surface-variant text-[10px] md:text-xs uppercase tracking-widest mb-1">Investment</p>
+                <p class="font-data-md md:font-data-lg text-sm md:text-lg font-bold truncate">${{ user.investment_balance }}</p>
+            </div>
+            <div class="flex-1 text-center px-2">
+                <p class="text-on-surface-variant text-[10px] md:text-xs uppercase tracking-widest mb-1">Referral</p>
+                <p class="font-data-md md:font-data-lg text-sm md:text-lg font-bold truncate">${{ user.referral_balance }}</p>
+            </div>
+            <div class="flex-1 text-center px-2">
+                <p class="text-on-surface-variant text-[10px] md:text-xs uppercase tracking-widest mb-1">Invested</p>
+                <p class="font-data-md md:font-data-lg text-sm md:text-lg font-bold truncate">${{ total_invested }}</p>
+            </div>
+        </div>
     </div>
 
     <!-- Quick Actions -->
@@ -192,26 +212,6 @@
             {% empty %}
             <p class="text-on-surface-variant text-sm p-4">No activity yet.</p>
             {% endfor %}
-        </div>
-    </div>
-
-    <!-- Secondary stats: kept for full detail, tucked below the main feed -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Total Profit</p>
-            <p class="font-data-lg text-xl font-bold text-primary">${{ user.profit_balance }}</p>
-        </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Investment Balance</p>
-            <p class="font-data-lg text-xl font-bold">${{ user.investment_balance }}</p>
-        </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Referral Balance</p>
-            <p class="font-data-lg text-xl font-bold">${{ user.referral_balance }}</p>
-        </div>
-        <div class="rounded-3xl edge-bg-5 border edge-b-5 p-5">
-            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1">Currently Invested</p>
-            <p class="font-data-lg text-xl font-bold">${{ total_invested }}</p>
         </div>
     </div>
 
