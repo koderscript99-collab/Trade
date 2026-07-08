@@ -78,29 +78,48 @@ body{background:var(--bg);color:var(--on-surface);font-family:'Inter',sans-serif
 .auth-head h1{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;}
 .auth-head p{font-size:13px;color:var(--on-surface-sub);}
 
-.styled-form p{margin-bottom:16px;}
+.styled-form p{margin-bottom:18px;}
 .styled-form label{
   display:block;font-size:12px;font-weight:600;letter-spacing:.03em;
-  text-transform:uppercase;color:var(--on-surface-sub);margin-bottom:6px;
+  text-transform:uppercase;color:var(--on-surface-sub);margin-bottom:7px;
 }
 .styled-form input, .styled-form select, .styled-form textarea{
-  width:100%;padding:12px 14px;border-radius:8px;
-  background:var(--surface-bright);border:1px solid var(--border);
+  width:100%;padding:13px 15px;border-radius:10px;
+  background:var(--surface-bright);
+  border:1.5px solid var(--border-hover);
   color:var(--on-surface);font-family:'Inter',sans-serif;font-size:14px;
-  transition:border-color .2s, box-shadow .2s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.25);
+  transition:border-color .2s, box-shadow .2s, background .2s;
+}
+.styled-form input::placeholder, .styled-form textarea::placeholder{
+  color:var(--on-surface-sub);opacity:.6;
+}
+.styled-form input:hover, .styled-form select:hover, .styled-form textarea:hover{
+  border-color:var(--primary-40);
 }
 .styled-form input:focus, .styled-form select:focus, .styled-form textarea:focus{
-  outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-10);
+  outline:none;border-color:var(--primary);
+  box-shadow:0 0 0 4px var(--primary-10), inset 0 1px 3px rgba(0,0,0,0.15);
+  background:var(--surface-card);
+}
+.styled-form select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%23bbcabf' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  padding-right:38px;
+}
+.styled-form input[type="checkbox"], .styled-form input[type="radio"]{
+  width:auto;box-shadow:none;accent-color:var(--primary);margin-right:8px;
 }
 .styled-form ul.errorlist{
-  list-style:none;color:var(--error);font-size:12px;margin-top:4px;
+  list-style:none;color:var(--error);font-size:12px;margin-top:6px;
 }
 
 .btn-primary{
   background:var(--primary);color:var(--on-primary);border:none;cursor:pointer;
   font-size:15px;font-weight:700;padding:13px 22px;border-radius:9px;
   box-shadow:var(--glow-strong);transition:filter .2s, transform .15s;
-  display:block;width:100%;text-align:center;
+  display:block;width:100%;text-align:center;margin-top:6px;
 }
 .btn-primary:hover{filter:brightness(1.1);}
 .btn-primary:active{transform:scale(.97);}
@@ -122,22 +141,26 @@ body{background:var(--bg);color:var(--on-surface);font-family:'Inter',sans-serif
   </button>
 </header>
 
-<div class="auth-head">
-  <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">currency_exchange</span>
-  <h1>Create an Account</h1>
-  <p>Start investing in minutes.</p>
+<div class="auth-wrap">
+  <div class="auth-glow"></div>
+  <div class="auth-card">
+    <div class="auth-head">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">currency_exchange</span>
+      <h1>Create an Account</h1>
+      <p>Start investing in minutes.</p>
+    </div>
+
+    <form method="post" class="styled-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn-primary">Register</button>
+    </form>
+
+    <p class="auth-foot">
+      Already have an account? <a href="{% url 'core:login' %}">Login</a>
+    </p>
+  </div>
 </div>
-
-<form method="post" class="styled-form">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn-primary">Register</button>
-</form>
-
-<p class="auth-foot">
-  Already have an account? <a href="{% url 'core:login' %}">Login</a>
-</p>
-
 {% endblock %}
 
 
