@@ -11,12 +11,12 @@ from django.urls import reverse_lazy
 
 from .models import (
     User, Deposit, Withdrawal, Investment, InvestmentPlan, Wallet,
-    KYC, News, SiteSetting, Transaction, ReferralCommission,
+    KYC, News, SiteSetting, Transaction, ReferralCommission,Testimonial
 )
 from .forms import (
     InvestmentPlanForm, WalletForm, NewsForm, SiteSettingForm,
     AdminUserEditForm, AdminBalanceAdjustForm, DepositReviewForm,
-    WithdrawalReviewForm, KYCReviewForm, AdminNotificationForm, AdminLoginForm,
+    WithdrawalReviewForm, KYCReviewForm, AdminNotificationForm, AdminLoginForm,TestimonialForm
 )
 from .decorators import admin_required, AdminRequiredMixin
 from .utils import log_transaction, notify_user, broadcast_notification, credit_referral_commission
@@ -455,3 +455,29 @@ def admin_send_notification_view(request):
         form = AdminNotificationForm()
 
     return render(request, "core/admin/admin_notifications_send.html", {"form": form})
+
+
+class AdminTestimonialListView(AdminRequiredMixin, ListView):
+    model = Testimonial
+    template_name = "core/admin/admin_testimonials_list.html"
+    context_object_name = "testimonials"
+
+
+class AdminTestimonialCreateView(AdminRequiredMixin, CreateView):
+    model = Testimonial
+    form_class = TestimonialForm
+    template_name = "core/admin/admin_testimonial_form.html"
+    success_url = reverse_lazy("core:admin_testimonials_list")
+
+
+class AdminTestimonialUpdateView(AdminRequiredMixin, UpdateView):
+    model = Testimonial
+    form_class = TestimonialForm
+    template_name = "core/admin/admin_testimonial_form.html"
+    success_url = reverse_lazy("core:admin_testimonials_list")
+
+
+class AdminTestimonialDeleteView(AdminRequiredMixin, DeleteView):
+    model = Testimonial
+    template_name = "core/admin/admin_testimonial_confirm_delete.html"
+    success_url = reverse_lazy("core:admin_testimonials_list")

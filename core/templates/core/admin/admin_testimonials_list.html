@@ -1,0 +1,53 @@
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Testimonials{% endblock %}
+{% block page_title %}Testimonials{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-on-surface tracking-tight flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">rate_review</span>Testimonials
+      </h1>
+      <p class="text-sm text-on-surface-variant mt-1">Client success stories shown on the landing page.</p>
+    </div>
+    <a href="{% url 'core:admin_testimonial_create' %}"
+       class="inline-flex items-center gap-2 bg-primary text-on-primary font-bold text-sm px-4 py-2.5 rounded-md hover:brightness-110 transition-all">
+      <span class="material-symbols-outlined text-lg">add</span>Add Testimonial
+    </a>
+  </div>
+
+  <div class="glass-panel rounded-xl divide-y divide-white/5 overflow-hidden">
+    {% for t in testimonials %}
+    <div class="flex items-center gap-4 p-4">
+      <div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high shrink-0 flex items-center justify-center">
+        {% if t.client_photo %}
+        <img src="{{ t.client_photo.url }}" alt="{{ t.client_name }}" class="w-full h-full object-cover">
+        {% else %}
+        <span class="material-symbols-outlined text-on-surface-variant">person</span>
+        {% endif %}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-on-surface">{{ t.client_name }}</p>
+        <p class="text-xs text-on-surface-variant">{{ t.client_role|default:"—" }}</p>
+        <p class="text-sm text-on-surface-variant mt-1 truncate">{{ t.comment }}</p>
+      </div>
+      <div class="text-primary text-sm font-bold shrink-0">{{ t.rating }}★</div>
+      <span class="text-xs font-bold px-2 py-1 rounded-full shrink-0
+          {% if t.is_active %}text-primary bg-primary/10{% else %}text-on-surface-variant bg-surface-container-high{% endif %}">
+          {% if t.is_active %}Live{% else %}Hidden{% endif %}
+      </span>
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="{% url 'core:admin_testimonial_update' t.pk %}" class="text-on-surface-variant hover:text-primary">
+          <span class="material-symbols-outlined text-lg">edit</span>
+        </a>
+        <a href="{% url 'core:admin_testimonial_delete' t.pk %}" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined text-lg">delete</span>
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-on-surface-variant text-sm p-6">No testimonials yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

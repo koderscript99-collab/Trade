@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from .models import (
     User, InvestmentPlan, Investment, Wallet, Deposit, Withdrawal,
-    ReferralCommission, Notification, News, Transaction, KYC, SiteSetting,
+    ReferralCommission, Notification, News, Transaction, KYC, SiteSetting,Testimonial
 )
 
 
@@ -98,3 +98,12 @@ class KYCAdmin(admin.ModelAdmin):
 @admin.register(SiteSetting)
 class SiteSettingAdmin(admin.ModelAdmin):
     list_display = ("site_name", "minimum_deposit", "minimum_withdrawal", "maintenance_mode")
+
+
+
+
+@admin.register(Testimonial)
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ("client_name", "client_role", "rating", "is_active", "order", "created_at")
+    list_filter = ("is_active", "rating")
+    search_fields = ("client_name", "comment")

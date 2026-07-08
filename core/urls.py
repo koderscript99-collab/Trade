@@ -88,4 +88,8 @@ urlpatterns = [
     path("panel/settings/", admin_views.admin_site_settings_view, name="admin_site_settings"),
     path("panel/transactions/", admin_views.admin_transactions_list_view, name="admin_transactions_list"),
     path("panel/notify/", admin_views.admin_send_notification_view, name="admin_send_notification"),
+    path("panel/testimonials/", admin_views.AdminTestimonialListView.as_view(), name="admin_testimonials_list"),
+    path("panel/testimonials/new/", admin_views.AdminTestimonialCreateView.as_view(), name="admin_testimonial_create"),
+    path("panel/testimonials/<int:pk>/edit/", admin_views.AdminTestimonialUpdateView.as_view(), name="admin_testimonial_update"),
+    path("panel/testimonials/<int:pk>/delete/", admin_views.AdminTestimonialDeleteView.as_view(), name="admin_testimonial_delete"),
 ]

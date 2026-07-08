@@ -155,7 +155,15 @@ tailwind.config = {
        {% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
       <span class="material-symbols-outlined">settings</span><span>Settings</span>
     </a>
+    {% url 'core:admin_testimonials_list' as testimonials_url %}
+    <a href="{{ testimonials_url }}"
+     class="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all
+     {% if request.path == testimonials_url %}text-primary bg-primary/10 border-r-2 border-primary font-bold
+     {% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50{% endif %}">
+    <span class="material-symbols-outlined">rate_review</span><span>Testimonials</span>
+   </a>
   </nav>
+   
 
   <div class="px-6 pt-6 mt-6 border-t border-white/5">
     <div class="flex items-center gap-3">

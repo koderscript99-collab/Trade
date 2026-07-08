@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.db.models import Sum
 
 from .models import (
-    User, InvestmentPlan, Investment, Wallet, Deposit, Withdrawal,
+    Testimonial, User, InvestmentPlan, Investment, Wallet, Deposit, Withdrawal,
     ReferralCommission, Notification, News, KYC, Transaction, SiteSetting
 )
 from .forms import (
@@ -381,3 +381,12 @@ def notification_mark_read_view(request, pk):
     notification.save(update_fields=["is_read"])
     next_url = request.META.get("HTTP_REFERER") or "core:dashboard"
     return redirect(next_url if next_url.startswith("/") else "core:dashboard")
+
+
+def landing_page(request):
+    plans = InvestmentPlan.objects.filter(active=True)
+    news = News.objects.filter(published=True).order_by("-created_at")[:6]
+    testimonials = Testimonial.objects.filter(is_active=True)
+    return render(request, "core/landing.html", {
+        "plans": plans, "news": news, "testimonials": testimonials,
+    })

@@ -306,3 +306,38 @@ class SiteSetting(models.Model):
     maintenance_mode = models.BooleanField(default=False)
     support_email = models.EmailField()
     support_phone = models.CharField(max_length=30)
+
+
+
+class Testimonial(models.Model):
+
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    client_name = models.CharField(max_length=100)
+
+    client_role = models.CharField(
+        max_length=100, blank=True,
+        help_text="e.g. Verified Trader, Elite Investor"
+    )
+
+    client_photo = models.ImageField(
+        upload_to="testimonials/", blank=True, null=True
+    )
+
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, default=5)
+
+    comment = models.TextField()
+
+    is_active = models.BooleanField(default=True)
+
+    order = models.PositiveIntegerField(
+        default=0, help_text="Lower numbers appear first"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["order", "-created_at"]
+
+    def __str__(self):
+        return f"{self.client_name} ({self.rating}★)"

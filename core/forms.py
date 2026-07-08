@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import FileExtensionValidator
 
 from .models import (
-    User, Deposit, Withdrawal, Investment, InvestmentPlan,
+    Testimonial, User, Deposit, Withdrawal, Investment, InvestmentPlan,
     Wallet, KYC, News, SiteSetting, Notification
 )
 
@@ -215,3 +215,13 @@ class AdminNotificationForm(forms.Form):
 
 class AdminLoginForm(AuthenticationForm):
     username = forms.CharField(label="Admin Username")
+
+
+
+class TestimonialForm(forms.ModelForm):
+    class Meta:
+        model = Testimonial
+        fields = ["client_name", "client_role", "client_photo", "rating", "comment", "is_active", "order"]
+        widgets = {
+            "comment": forms.Textarea(attrs={"rows": 3}),
+        }

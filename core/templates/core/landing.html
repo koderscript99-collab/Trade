@@ -739,6 +739,35 @@ footer {
   .chips-row     { grid-template-columns: 1fr; }
   nav.main-nav   { display: none; }
 }
+/* TESTIMONIALS */
+.testimonials-section { padding: 88px 28px; max-width: 1200px; margin: 0 auto; }
+.testimonials-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+.testimonials-header .badge { margin: 0 auto 20px; }
+.testimonials-header h2 { font-size: clamp(26px, 3.5vw, 40px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+.testimonials-header h2 span { color: var(--primary); }
+.testimonials-header p { font-size: 14px; color: var(--on-surface-sub); }
+
+.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.testimonial-card {
+  background: var(--glass-bg); backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: 14px; padding: 26px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.testimonial-card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+.testimonial-stars { display: flex; gap: 2px; }
+.testimonial-stars .material-symbols-outlined { font-size: 16px; color: var(--primary); }
+.testimonial-stars .material-symbols-outlined.empty { color: var(--border-hover); }
+.testimonial-quote { font-size: 13px; color: var(--on-surface-sub); line-height: 1.7; flex: 1; }
+.testimonial-person { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+.testimonial-avatar-fallback {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: var(--primary-10); color: var(--primary);
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;
+}
+.testimonial-name { font-size: 13px; font-weight: 700; }
+.testimonial-role { font-size: 11px; color: var(--on-surface-sub); }
 </style>
 {% endblock %}
 
@@ -1030,6 +1059,51 @@ footer {
     </div>
   </div>
 </section>
+
+<!-- ══════════════════════════════════
+     CLIENT TESTIMONIALS
+     Admin-managed via Testimonial model
+══════════════════════════════════ -->
+{% if testimonials %}
+<section class="testimonials-section">
+  <div class="testimonials-header reveal">
+    <div class="badge">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">verified</span>
+      Success Stories
+    </div>
+    <h2>Client <span>Testimonials</span></h2>
+    <p>Hear from our satisfied clients who have achieved impressive results with our platform.</p>
+  </div>
+
+  <div class="testimonials-grid">
+    {% for t in testimonials %}
+    <div class="testimonial-card reveal {% cycle 'd1' 'd2' 'd3' %}">
+      <div class="testimonial-stars">
+        {% for i in "12345" %}
+          {% if forloop.counter <= t.rating %}
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">star</span>
+          {% else %}
+          <span class="material-symbols-outlined empty">star</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <p class="testimonial-quote">&ldquo;{{ t.comment }}&rdquo;</p>
+      <div class="testimonial-person">
+        {% if t.client_photo %}
+        <img src="{{ t.client_photo.url }}" alt="{{ t.client_name }}" class="testimonial-avatar">
+        {% else %}
+        <span class="testimonial-avatar-fallback">{{ t.client_name|first|upper }}</span>
+        {% endif %}
+        <div>
+          <div class="testimonial-name">{{ t.client_name }}</div>
+          {% if t.client_role %}<div class="testimonial-role">{{ t.client_role }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
 
 <!-- ══════════════════════════════════

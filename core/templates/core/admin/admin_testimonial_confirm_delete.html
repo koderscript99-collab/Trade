@@ -1,0 +1,17 @@
+{% extends "core/admin/admin_base.html" %}
+{% block title %}Delete Testimonial{% endblock %}
+{% block page_title %}Delete Testimonial{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto">
+  <div class="glass-panel rounded-xl p-6 text-center">
+    <span class="material-symbols-outlined text-error text-4xl mb-3">warning</span>
+    <h1 class="text-lg font-bold text-on-surface mb-2">Delete testimonial from {{ object.client_name }}?</h1>
+    <p class="text-sm text-on-surface-variant mb-6">This cannot be undone.</p>
+    <form method="post" class="flex flex-col sm:flex-row gap-3">
+      {% csrf_token %}
+      <button type="submit" class="flex-1 bg-error text-white font-bold py-2.5 rounded-md hover:brightness-110">Delete</button>
+      <a href="{% url 'core:admin_testimonials_list' %}" class="flex-1 bg-surface-container-high text-on-surface font-bold py-2.5 rounded-md text-center">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
