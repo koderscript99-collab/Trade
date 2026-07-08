@@ -45,30 +45,3 @@
     {% endif %}
 </div>
 {% endblock %}
-EOF
-
-cat > kyc_submit.html <<'EOF'
-{% extends "core/base.html" %}
-{% block title %}Submit KYC{% endblock %}
-{% block content %}
-<div class="max-w-md mx-auto px-container-padding py-stack-lg">
-
-    <div class="flex items-center gap-3 mb-8">
-        <a href="{% url 'core:kyc_status' %}" class="w-10 h-10 rounded-lg edge-bg-5 flex items-center justify-center">
-            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
-        </a>
-        <h1 class="font-display-lg text-headline-md">Submit KYC Documents</h1>
-    </div>
-
-    <div class="glass-panel p-6 md:p-8 rounded-xl">
-        <form method="post" enctype="multipart/form-data" class="styled-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn-primary w-full mt-2">
-                <span class="material-symbols-outlined text-sm">upload</span>
-                Submit
-            </button>
-        </form>
-    </div>
-</div>
-{% endblock %}
